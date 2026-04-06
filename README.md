@@ -1,8 +1,8 @@
-# Published Sites
+# HTML Dashboards
 
-Team HTML sites hosted on GitHub Pages.
+Team HTML dashboards hosted on GitHub Pages.
 
-**Live catalog:** https://felipeantunezaccenture.github.io/sites/
+**Live catalog:** https://felipeantunezaccenture.github.io/html-dashboards/
 
 ## How to publish a site
 
@@ -12,7 +12,7 @@ Run `/publish-html` in Claude Code with the HTML file.
 
 ### If you are a team member
 
-1. Clone this repo: `git clone https://github.com/felipeantunezaccenture/sites.git`
+1. Clone this repo: `git clone https://github.com/felipeantunezaccenture/html-dashboards.git`
 2. Create a branch: `git checkout -b add/your-site-name`
 3. Create a folder with your site name and add your HTML as `index.html`:
    ```
@@ -27,7 +27,7 @@ Or run `/publish-html` in Claude Code and it will handle the PR for you.
 ## Structure
 
 ```
-sites/
+html-dashboards/
 ├── index.html              ← auto-generated catalog
 ├── site-a/
 │   └── index.html
