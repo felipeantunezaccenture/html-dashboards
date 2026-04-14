@@ -1102,9 +1102,138 @@
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
         }
+
+        /* ============================================================
+           LOGIN SCREEN
+           ============================================================ */
+
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: var(--color-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-card {
+            width: 400px;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            padding: var(--space-12) var(--space-10);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-2);
+        }
+
+        .login-logo svg {
+            width: 36px;
+            height: 36px;
+            color: var(--color-primary);
+        }
+
+        .login-logo span {
+            font-size: var(--text-2xl);
+            font-weight: var(--weight-bold);
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+        }
+
+        .login-tagline {
+            font-family: var(--font-serif);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-10);
+        }
+
+        .login-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-5);
+        }
+
+        .login-form .form-input {
+            width: 100%;
+        }
+
+        .login-form .btn {
+            width: 100%;
+            height: 44px;
+            font-size: var(--text-base);
+        }
+
+        .login-error {
+            font-size: var(--text-xs);
+            color: var(--color-error);
+            min-height: 18px;
+            text-align: center;
+        }
+
+        .login-footer {
+            margin-top: var(--space-8);
+            font-size: var(--text-xs);
+            color: var(--color-text-tertiary);
+        }
+
+        .app-wrapper {
+            display: none;
+        }
+
+        .app-wrapper.visible {
+            display: contents;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ============================================================
+         LOGIN SCREEN
+         ============================================================ -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 26V10"/>
+                    <path d="M14 18c-5-2-8-7-7-13 4 1 8 4 9 9"/>
+                    <path d="M14 14c4-3 9-3 12-1-2 4-6 6-10 5"/>
+                    <path d="M6 26h16"/>
+                </svg>
+                <span>Campo</span>
+            </div>
+            <p class="login-tagline">Gesti&oacute;n inteligente para el agro</p>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input class="form-input" id="loginEmail" type="email" placeholder="nombre@campo.com.ar" value="felipe.antunez@campo.com.ar">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Contrase&ntilde;a</label>
+                    <input class="form-input" id="loginPassword" type="password" placeholder="Ingres&aacute; tu contrase&ntilde;a" value="12345678">
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="btn btn-primary">Iniciar sesi&oacute;n</button>
+            </form>
+            <p class="login-footer">Campo v1.0 &mdash; Todos los derechos reservados</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         APP (visible after login)
+         ============================================================ -->
+    <div class="app-wrapper" id="appWrapper">
 
     <!-- ============================================================
          SIDEBAR
@@ -1943,10 +2072,43 @@
         </main>
     </div>
 
+    </div><!-- /app-wrapper -->
+
     <!-- ============================================================
          JAVASCRIPT
          ============================================================ -->
     <script>
+        // ---- Login / Logout ----
+        const loginScreen = document.getElementById('loginScreen');
+        const appWrapper = document.getElementById('appWrapper');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+
+        function showApp() {
+            loginScreen.classList.add('hidden');
+            appWrapper.classList.add('visible');
+        }
+
+        function showLogin() {
+            appWrapper.classList.remove('visible');
+            loginScreen.classList.remove('hidden');
+            loginError.textContent = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        loginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+
+            if (!email || !pass) {
+                loginError.textContent = 'Complet\u00e1 ambos campos para continuar.';
+                return;
+            }
+            loginError.textContent = '';
+            showApp();
+        });
+
         // ---- Section names for breadcrumb ----
         const sectionNames = {
             dashboard: 'Dashboard',
@@ -2003,6 +2165,14 @@
                     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                     document.getElementById('sec-config').classList.add('active');
                     document.getElementById('headerSection').textContent = sectionNames['config'];
+                } else if (action === 'logout') {
+                    // Reset to dashboard and show login
+                    document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+                    document.querySelector('.sidebar-nav a[data-section="dashboard"]').classList.add('active');
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                    document.getElementById('sec-dashboard').classList.add('active');
+                    document.getElementById('headerSection').textContent = sectionNames['dashboard'];
+                    showLogin();
                 }
             });
         });
