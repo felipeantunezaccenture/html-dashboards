@@ -1195,6 +1195,48 @@
         .app-wrapper.visible {
             display: contents;
         }
+
+        /* Logout confirmation modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            width: 380px;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            padding: var(--space-8);
+        }
+
+        .modal-title {
+            font-size: var(--text-base);
+            font-weight: var(--weight-semibold);
+            color: var(--color-text);
+            margin-bottom: var(--space-2);
+        }
+
+        .modal-text {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            line-height: var(--leading-normal);
+            margin-bottom: var(--space-6);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+        }
     </style>
 </head>
 <body>
@@ -2074,6 +2116,18 @@
 
     </div><!-- /app-wrapper -->
 
+    <!-- Logout confirmation modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal">
+            <div class="modal-title">Cerrar sesi&oacute;n</div>
+            <p class="modal-text">&iquest;Est&aacute;s seguro de que quer&eacute;s cerrar la sesi&oacute;n?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-sm" id="logoutCancel">Cancelar</button>
+                <button class="btn btn-primary btn-sm" id="logoutConfirm">Cerrar sesi&oacute;n</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ============================================================
          JAVASCRIPT
          ============================================================ -->
@@ -2166,15 +2220,30 @@
                     document.getElementById('sec-config').classList.add('active');
                     document.getElementById('headerSection').textContent = sectionNames['config'];
                 } else if (action === 'logout') {
-                    // Reset to dashboard and show login
-                    document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
-                    document.querySelector('.sidebar-nav a[data-section="dashboard"]').classList.add('active');
-                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                    document.getElementById('sec-dashboard').classList.add('active');
-                    document.getElementById('headerSection').textContent = sectionNames['dashboard'];
-                    showLogin();
+                    document.getElementById('logoutModal').classList.add('open');
                 }
             });
+        });
+
+        // ---- Logout confirmation modal ----
+        const logoutModal = document.getElementById('logoutModal');
+
+        document.getElementById('logoutCancel').addEventListener('click', () => {
+            logoutModal.classList.remove('open');
+        });
+
+        document.getElementById('logoutConfirm').addEventListener('click', () => {
+            logoutModal.classList.remove('open');
+            document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+            document.querySelector('.sidebar-nav a[data-section="dashboard"]').classList.add('active');
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec-dashboard').classList.add('active');
+            document.getElementById('headerSection').textContent = sectionNames['dashboard'];
+            showLogin();
+        });
+
+        logoutModal.addEventListener('click', e => {
+            if (e.target === logoutModal) logoutModal.classList.remove('open');
         });
 
         // ---- Sub-tab navigation (Ingreso de datos) ----
