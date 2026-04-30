@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Adoption Pulse · SC&O Data & AI · April 2026</title>
+<style>
+:root {
+  --purple:       #A100FF;
+  --purple-dark:  #6600A3;
+  --purple-deeper:#1C0649;
+  --purple-mid:   #7B2D8B;
+  --purple-light: #D580FF;
+  --purple-bg:    #F5EDFF;
+  --purple-bg2:   #EDD9FF;
+  --teal:         #00C48C;
+  --teal-bg:      #E6FFF5;
+  --teal-border:  #9EEACC;
+  --gold:         #F59E0B;
+  --gold-bg:      #FFFBEB;
+  --gold-border:  #FCD34D;
+  --red:          #EF4444;
+  --red-bg:       #FEF2F2;
+  --red-border:   #FCA5A5;
+  --bg:           #FFFFFF;
+  --bg2:          #F8F7FC;
+  --bg3:          #F0ECF8;
+  --text:         #1A1228;
+  --text-mid:     #4A3F6B;
+  --text-muted:   #7A6E9A;
+  --border:       #E2D5F5;
+  --border2:      #D1BFEF;
+  --shadow:       0 2px 16px rgba(161,0,255,0.07);
+  --shadow-md:    0 4px 24px rgba(161,0,255,0.10);
+  --shadow-lg:    0 8px 40px rgba(161,0,255,0.14);
+  --nav-h: 58px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:16px; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: rgba(161,0,255,0.2); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(161,0,255,0.4); }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2.5rem;
+  display: flex; align-items:center;
+  height: var(--nav-h);
+  box-shadow: 0 1px 12px rgba(161,0,255,0.07);
+  gap: 0;
+}
+.nav-logo {
+  font-weight:800; font-size:0.92rem; color:var(--purple);
+  white-space:nowrap; flex-shrink:0; margin-right:2rem;
+  letter-spacing:-0.01em;
+}
+.nav-tabs { display:flex; gap:2px; flex:1; }
+.nav-tab {
+  background:none; border:none;
+  color:var(--text-muted); font-size:0.79rem; font-weight:500;
+  white-space:nowrap; padding:0.38rem 0.9rem;
+  border-radius:2rem; cursor:pointer;
+  transition:all 0.18s; font-family:inherit;
+}
+.nav-tab:hover { color:var(--purple); background:var(--purple-bg); }
+.nav-tab.active { color:var(--purple); background:var(--purple-bg); font-weight:700; }
+.nav-meta {
+  margin-left:auto; flex-shrink:0;
+  font-size:0.72rem; font-weight:600; color:var(--text-muted);
+  letter-spacing:0.04em; text-transform:uppercase;
+  background:var(--bg2); border:1px solid var(--border);
+  padding:0.25rem 0.8rem; border-radius:2rem;
+}
+
+/* PANELS */
+.panels { margin-top:var(--nav-h); }
+.panel { display:none; padding:3.5rem 3.5rem 5rem; max-width:1440px; margin:0 auto; animation:fadein 0.22s ease both; }
+.panel.active { display:block; }
+@keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* PANEL HEADER */
+.panel-eyebrow { font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--purple); margin-bottom:0.5rem; }
+.panel-title { font-size:clamp(1.7rem,2.8vw,2.5rem); font-weight:800; color:var(--text); line-height:1.1; margin-bottom:0.6rem; letter-spacing:-0.03em; }
+.panel-title .hl { color:var(--purple); }
+.panel-sub { font-size:0.93rem; color:var(--text-mid); max-width:620px; line-height:1.65; }
+.rule { width:40px; height:4px; background:var(--purple); border-radius:2px; margin:1rem 0 2rem; }
+.panel-header { margin-bottom:2.5rem; }
+
+/* STAT STRIP */
+.stat-strip { display:flex; gap:1rem; margin-bottom:2rem; }
+.stat-chip {
+  flex:1; background:var(--bg2);
+  border:1px solid var(--border); border-radius:1rem;
+  padding:1.25rem 1.5rem; position:relative; overflow:hidden;
+  transition:box-shadow 0.2s,transform 0.2s;
+}
+.stat-chip:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.stat-chip::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--purple); border-radius:1rem 1rem 0 0;
+}
+.stat-chip.teal::before { background:var(--teal); }
+.stat-chip.gold::before { background:var(--gold); }
+.stat-chip.red::before  { background:var(--red); }
+.sc-num { font-size:2.4rem; font-weight:900; line-height:1; letter-spacing:-0.04em; color:var(--purple); margin-bottom:0.3rem; }
+.stat-chip.teal .sc-num { color:var(--teal); }
+.stat-chip.gold .sc-num { color:var(--gold); }
+.stat-chip.red  .sc-num { color:var(--red); }
+.sc-label { font-size:0.7rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.15rem; }
+.sc-sub   { font-size:0.77rem; color:var(--text-muted); line-height:1.4; }
+
+/* CARDS */
+.card {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:1rem; padding:1.75rem;
+  box-shadow:var(--shadow); height:100%;
+}
+.card-title { font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); padding-bottom:0.85rem; border-bottom:1px solid var(--border); margin-bottom:1.25rem; }
+
+/* GRIDS */
+.grid-3  { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+.grid-2  { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+.grid-32 { display:grid; grid-template-columns:3fr 2fr; gap:1.25rem; }
+.col     { display:flex; flex-direction:column; gap:1rem; }
+.mb-5    { margin-bottom:1.25rem; }
+
+/* INSIGHT CARDS */
+.insight-card { border-radius:0.75rem; padding:1rem 1.25rem; display:flex; gap:0.85rem; align-items:flex-start; border:1px solid transparent; }
+.insight-card.purple { background:var(--purple-bg); border-color:var(--purple-bg2); }
+.insight-card.teal   { background:var(--teal-bg);   border-color:var(--teal-border); }
+.insight-card.red    { background:var(--red-bg);    border-color:var(--red-border); }
+.insight-card.gold   { background:var(--gold-bg);   border-color:var(--gold-border); }
+.ic-icon  { font-size:0.85rem; flex-shrink:0; margin-top:2px; }
+.ic-label { font-size:0.63rem; font-weight:800; letter-spacing:0.13em; text-transform:uppercase; margin-bottom:0.2rem; }
+.insight-card.purple .ic-label { color:var(--purple-dark); }
+.insight-card.teal   .ic-label { color:#006B4F; }
+.insight-card.red    .ic-label { color:#991B1B; }
+.insight-card.gold   .ic-label { color:#92400E; }
+.ic-text  { font-size:0.81rem; color:var(--text-mid); line-height:1.5; }
+.ic-text strong { color:var(--text); font-weight:700; }
+
+/* PROGRESS BARS */
+.prog-item { margin-bottom:0.85rem; }
+.prog-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem; }
+.prog-label { font-size:0.79rem; color:var(--text-mid); }
+.prog-score { font-size:0.8rem; font-weight:700; font-variant-numeric:tabular-nums; }
+.prog-track { height:5px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+.prog-fill  { height:100%; border-radius:3px; }
+
+/* BAR CHART */
+.bar-chart { display:flex; flex-direction:column; gap:0.6rem; }
+.bc-row    { display:flex; align-items:center; gap:0.7rem; }
+.bc-lbl    { font-size:0.75rem; color:var(--text-mid); width:88px; text-align:right; flex-shrink:0; }
+.bc-track  { flex:1; height:14px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+.bc-fill   { height:100%; border-radius:3px; }
+.bc-val    { font-size:0.76rem; font-weight:700; color:var(--text); width:16px; flex-shrink:0; }
+
+/* DONUT */
+.donut-wrap    { display:flex; align-items:center; gap:1.5rem; }
+.donut-svg-pos { position:relative; flex-shrink:0; }
+.donut-center  { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+.dc-num { font-size:1.5rem; font-weight:900; color:var(--text); line-height:1; letter-spacing:-0.03em; }
+.dc-lbl { font-size:0.6rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
+.donut-legend  { display:flex; flex-direction:column; gap:0.55rem; flex:1; min-width:0; }
+.dl-row  { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; }
+.dl-left { display:flex; align-items:center; gap:0.5rem; font-size:0.79rem; color:var(--text-mid); min-width:0; }
+.dl-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dl-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.dl-val  { font-size:0.82rem; font-weight:700; color:var(--text); flex-shrink:0; }
+
+/* CONTRAST STRIP */
+.contrast-strip { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border); border-radius:1rem; overflow:hidden; box-shadow:var(--shadow); }
+.cs-side { padding:1.5rem; }
+.cs-side.dark  { background:linear-gradient(135deg,var(--purple-deeper) 0%,#3D0080 100%); }
+.cs-side.light { background:var(--bg2); border-left:1px solid var(--border); }
+.cs-tag  { font-size:0.63rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:0.5rem; }
+.cs-side.dark  .cs-tag { color:rgba(255,255,255,0.5); }
+.cs-side.light .cs-tag { color:var(--text-muted); }
+.cs-num  { font-size:2.8rem; font-weight:900; line-height:1; letter-spacing:-0.04em; }
+.cs-side.dark  .cs-num { color:#E080FF; }
+.cs-side.light .cs-num { color:var(--purple); }
+.cs-desc { font-size:0.77rem; line-height:1.5; margin-top:0.35rem; }
+.cs-side.dark  .cs-desc { color:rgba(255,255,255,0.65); }
+.cs-side.light .cs-desc { color:var(--text-muted); }
+
+/* MATURITY TRACK */
+.maturity-track { display:flex; gap:0.5rem; }
+.ms { flex:1; padding:1rem; border-radius:0.75rem; background:var(--bg2); border:1px solid var(--border); }
+.ms.peak { background:var(--purple-bg); border-color:var(--purple-bg2); }
+.ms-name { font-size:0.63rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.09em; }
+.ms.peak .ms-name { color:var(--purple-dark); }
+.ms-n    { font-size:2rem; font-weight:900; letter-spacing:-0.04em; color:var(--text-muted); line-height:1; margin-top:0.4rem; }
+.ms.peak .ms-n    { color:var(--purple); }
+.ms-pct  { font-size:0.71rem; color:var(--text-muted); margin-top:1px; }
+.ms.peak .ms-pct  { color:var(--purple-mid); font-weight:600; }
+
+/* WORD CLOUD TILES */
+.wc-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem; }
+.wc-tile { background:var(--bg2); border:1px solid var(--border); border-radius:0.75rem; padding:1rem 1.1rem; text-align:center; position:relative; overflow:hidden; transition:all 0.2s; }
+.wc-tile:hover { background:var(--purple-bg); border-color:var(--purple-bg2); }
+.wc-tile::before { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--purple); }
+.wc-word { font-size:1.1rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; }
+.wc-desc { font-size:0.67rem; color:var(--text-muted); margin-top:2px; }
+
+/* FOCUS CALLOUT */
+.focus-callout { border-left:4px solid var(--purple); background:var(--purple-bg); border-radius:0 0.75rem 0.75rem 0; padding:1rem 1.25rem; }
+.fc-label { font-size:0.63rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--purple-dark); margin-bottom:0.3rem; }
+.fc-text  { font-size:0.82rem; color:var(--text-mid); line-height:1.5; }
+.fc-text strong { color:var(--text); font-weight:700; }
+
+/* TAG BADGES */
+.tag-badge { display:inline-block; font-size:0.63rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.18rem 0.6rem; border-radius:2rem; }
+.tb-p { background:var(--purple-bg); color:var(--purple-dark); border:1px solid var(--purple-bg2); }
+.tb-t { background:var(--teal-bg);   color:#006B4F;           border:1px solid var(--teal-border); }
+.tb-r { background:var(--red-bg);    color:#991B1B;           border:1px solid var(--red-border); }
+.tb-g { background:var(--gold-bg);   color:#92400E;           border:1px solid var(--gold-border); }
+
+/* SUMMARY TABLE */
+.sum-table { width:100%; border-collapse:collapse; }
+.sum-table th { font-size:0.67rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); padding:0.75rem 1rem; border-bottom:2px solid var(--border); text-align:left; background:var(--bg2); }
+.sum-table td { font-size:0.81rem; color:var(--text-mid); padding:0.95rem 1rem; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.45; }
+.sum-table tr:last-child td { border-bottom:none; }
+.sum-table tr:hover td { background:var(--bg2); }
+.sum-table td:first-child { color:var(--text); font-weight:700; }
+.key-num { font-size:1.05rem; font-weight:900; letter-spacing:-0.02em; }
+
+/* GUIDE CARDS */
+.guide-card {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, var(--purple-deeper) 0%, #3D0080 100%);
+  border-radius: 1rem; padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  cursor: pointer; transition: all 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.guide-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(161,0,255,0.25); }
+.guide-card-icon { font-size: 1.6rem; flex-shrink: 0; }
+.guide-card-text { flex: 1; }
+.guide-card-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.2rem; }
+.guide-card-title { font-size: 0.88rem; font-weight: 700; color: white; margin-bottom: 0.15rem; line-height: 1.3; }
+.guide-card-sub { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+.guide-card-cta { font-size: 0.75rem; font-weight: 700; color: #C080FF; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 0.3rem; }
+
+/* GUIDE MODAL */
+.guide-overlay {
+  position: fixed; inset: 0; background: rgba(28,6,73,0.65);
+  backdrop-filter: blur(8px); z-index: 500;
+  display: none; align-items: center; justify-content: center;
+  padding: 2rem;
+}
+.guide-overlay.open { display: flex; }
+.guide-modal {
+  background: white; border-radius: 1.25rem;
+  max-width: 900px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+  animation: guideIn 0.22s ease both;
+}
+@keyframes guideIn { from{opacity:0;transform:scale(0.96) translateY(12px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.guide-modal-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: white; z-index: 10;
+}
+.guide-modal-title { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+.guide-modal-sub { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
+.guide-modal-close {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 0.5rem;
+  width: 34px; height: 34px; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.15s; margin-left: 1rem;
+}
+.guide-modal-close:hover { background: var(--purple); color: white; border-color: var(--purple); }
+.guide-modal-body { padding: 1.75rem 2rem; }
+
+/* guide tabs inside modal */
+.guide-tabs { display: flex; gap: 0; margin-bottom: 1.75rem; border: 1px solid var(--border); border-radius: 0.65rem; overflow: hidden; width: fit-content; }
+.guide-tab { background: none; border: none; border-right: 1px solid var(--border); color: var(--text-muted); font-size: 0.79rem; font-weight: 600; padding: 0.5rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit; }
+.guide-tab:last-child { border-right: none; }
+.guide-tab.active { background: var(--purple); color: white; }
+.guide-tab:hover:not(.active) { background: var(--purple-bg); color: var(--purple); }
+.guide-tab-panel { display: none; }
+.guide-tab-panel.active { display: block; }
+
+
+
+/* AGENT USECASES */
+.usecase-list { display:flex; flex-direction:column; gap:0.5rem; }
+.usecase-item { display:flex; align-items:center; gap:0.75rem; padding:0.65rem 1rem; background:var(--bg2); border:1px solid var(--border); border-radius:0.65rem; font-size:0.79rem; color:var(--text-mid); transition:all 0.15s; }
+.usecase-item:hover { background:var(--purple-bg); border-color:var(--purple-bg2); }
+.usecase-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.usecase-badge { margin-left:auto; font-size:0.62rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; padding:0.15rem 0.55rem; border-radius:2rem; background:var(--red-bg); color:#991B1B; border:1px solid var(--red-border); }
+
+/* DARK HERO CARD */
+.hero-dark {
+  background:linear-gradient(135deg,var(--purple-deeper) 0%,#3D0080 100%);
+  border:none; border-radius:1rem; padding:1.75rem; color:white;
+}
+.hero-dark .card-title-light { font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.45); padding-bottom:0.85rem; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:1.25rem; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SC&amp;O Data &amp; AI</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-panel="overview">Overview</button>
+    <button class="nav-tab" data-panel="adoption">Profile</button>
+    <button class="nav-tab" data-panel="productivity">Productivity</button>
+    <button class="nav-tab" data-panel="prompting">Prompting</button>
+    <button class="nav-tab" data-panel="agents">Agents</button>
+    <button class="nav-tab" data-panel="insights">Insights</button>
+  </div>
+  <div class="nav-meta">Internal · April 2026</div>
+</nav>
+
+<div class="panels">
+
+<!-- ════════════════════ OVERVIEW ════════════════════ -->
+<section class="panel active" id="panel-overview">
+  <div class="panel-header">
+    <div class="panel-eyebrow">Overview of Responses</div>
+    <h1 class="panel-title">AI embedded —<br>now <span class="hl">scale &amp; standardize</span></h1>
+    <div class="rule"></div>
+    <p class="panel-sub">Usage is not the issue. Consistency, governance, and shared standards are the gap — and they are entirely addressable at the team level.</p>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-chip">
+      <div class="sc-num">31</div>
+      <div class="sc-label">Respondents</div>
+      <div class="sc-sub">Full SC&amp;O Data &amp; AI team</div>
+    </div>
+    <div class="stat-chip">
+      <div class="sc-num">94%</div>
+      <div class="sc-label">Use AI daily</div>
+      <div class="sc-sub">29 of 31 — baseline is set</div>
+    </div>
+    <div class="stat-chip teal">
+      <div class="sc-num">55%</div>
+      <div class="sc-label">Agent experience</div>
+      <div class="sc-sub">Built or configured an agent</div>
+    </div>
+    <div class="stat-chip gold">
+      <div class="sc-num">58%</div>
+      <div class="sc-label">Want better prompting</div>
+      <div class="sc-sub">No shared framework yet</div>
+    </div>
+  </div>
+
+  <div class="grid-32 mb-5">
+    <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;">
+      <div>
+        <div class="card-title">Key Metrics</div>
+        <p style="font-size:0.875rem;color:var(--text-mid);margin-bottom:1.75rem;line-height:1.65;">
+          Across all seniority levels and profiles, AI is embedded in daily workflows. The adoption threshold has been crossed.
+          What remains is a <strong style="color:var(--text);">coordination problem</strong> — not a capability one.
+          The team needs standards, shared assets, and governance to move from individual excellence to collective capability.
+        </p>
+        <div class="prog-item">
+          <div class="prog-header">
+            <span class="prog-label">Daily AI users</span>
+            <span class="prog-score" style="color:var(--purple)">29 / 31</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:94%;background:var(--purple)"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-header">
+            <span class="prog-label">Have built or experimented with agents</span>
+            <span class="prog-score" style="color:var(--teal)">17 / 31</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:55%;background:var(--teal)"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-header">
+            <span class="prog-label">Want to improve prompting skills</span>
+            <span class="prog-score" style="color:var(--gold)">18 / 31</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:58%;background:var(--gold)"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-header">
+            <span class="prog-label">Already follow a prompting framework</span>
+            <span class="prog-score" style="color:var(--red)">10 / 31</span>
+          </div>
+          <div class="prog-track"><div class="prog-fill" style="width:32%;background:var(--red)"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="divider"></div>
+        <div class="focus-callout">
+          <div class="fc-label">Core Implication</div>
+          <div class="fc-text"><strong>Adoption is solved. The gap is collective.</strong> Fragmented individual practice, no shared standards, no reuse of agent work, no common prompting framework — all fixable.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="card-title">AI Maturity Distribution</div>
+        <!-- Pie chart: Novice 10% (3), Practitioner 58% (18), Advanced 26% (8), Builder 13% (4) — total 33 -->
+        <!-- stroke-dasharray segments on r=54 circumference=339.3 -->
+        <!-- Novice:      10% → 33.9  offset: 0        → starts at top -->
+        <!-- Practitioner:55% → 186.1  offset: -33.9  -->
+        <!-- Advanced:    24% → 81.4   offset: -220   -->
+        <!-- Builder:     12% → 40.8   offset: -301.4 -->
+        <div style="display:flex;align-items:center;gap:1.5rem;">
+          <div style="position:relative;flex-shrink:0;">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <!-- background circle -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#F0ECF8" stroke-width="28"/>
+              <!-- Novice 10% = 33.9 / 339.3 — grey -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#C4B5D4" stroke-width="28"
+                stroke-dasharray="33.9 305.4" stroke-dashoffset="84.8"
+                stroke-linecap="butt" transform="rotate(-90 80 80)"/>
+              <!-- Practitioner 55% (18/33) = 186.1 — purple -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#A100FF" stroke-width="28"
+                stroke-dasharray="185.1 154.2" stroke-dashoffset="50.9"
+                stroke-linecap="butt" transform="rotate(-90 80 80)"/>
+              <!-- Advanced 24% (8/33) = 81.5 — purple-light -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#D580FF" stroke-width="28"
+                stroke-dasharray="81.5 257.8" stroke-dashoffset="-134.2"
+                stroke-linecap="butt" transform="rotate(-90 80 80)"/>
+              <!-- Builder 12% (4/33) = 40.8 — teal -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#00C48C" stroke-width="28"
+                stroke-dasharray="40.8 298.5" stroke-dashoffset="-215.7"
+                stroke-linecap="butt" transform="rotate(-90 80 80)"/>
+              <!-- center -->
+              <text x="80" y="75" text-anchor="middle" font-size="22" font-weight="900" fill="#1A1228">31</text>
+              <text x="80" y="91" text-anchor="middle" font-size="9" font-weight="700" fill="#7A6E9A" letter-spacing="0.08em">TOTAL</text>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.7rem;flex:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:0.55rem;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#C4B5D4;flex-shrink:0;"></div>
+                <span style="font-size:0.79rem;color:var(--text-mid);">🌱 Novice</span>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:0.9rem;font-weight:800;color:#1A1228;">3</span>
+                <span style="font-size:0.72rem;color:var(--text-muted);margin-left:0.3rem;">10%</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:0.55rem;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#A100FF;flex-shrink:0;"></div>
+                <span style="font-size:0.79rem;color:var(--text-mid);font-weight:600;">⚙️ Practitioner</span>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:0.9rem;font-weight:800;color:#A100FF;">18</span>
+                <span style="font-size:0.72rem;color:var(--text-muted);margin-left:0.3rem;">58%</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:0.55rem;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#D580FF;flex-shrink:0;"></div>
+                <span style="font-size:0.79rem;color:var(--text-mid);">🚀 Advanced</span>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:0.9rem;font-weight:800;color:#D580FF;">8</span>
+                <span style="font-size:0.72rem;color:var(--text-muted);margin-left:0.3rem;">26%</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:0.55rem;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#00C48C;flex-shrink:0;"></div>
+                <span style="font-size:0.79rem;color:var(--text-mid);">🏗️ Builder</span>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:0.9rem;font-weight:800;color:#00C48C;">4</span>
+                <span style="font-size:0.72rem;color:var(--text-muted);margin-left:0.3rem;">13%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ ADOPTION ════════════════════ -->
+<section class="panel" id="panel-adoption">
+  <div class="panel-header">
+    <div class="panel-eyebrow">Section 01 · Adoption</div>
+    <h1 class="panel-title">Balanced team —<br><span class="hl">uneven maturity</span> by level</h1>
+    <div class="rule"></div>
+    <p class="panel-sub">Universal adoption across all seniority levels. But practices are not cascading upward — senior profiles lag on sophistication, not usage.</p>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-chip">
+      <div class="sc-num">94%</div>
+      <div class="sc-label">Daily usage</div>
+      <div class="sc-sub">Near-universal across all levels</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Overview</div>
+      <div class="donut-wrap" style="flex-direction:column;align-items:flex-start;gap:1.25rem;">
+        <div class="donut-svg-pos">
+          <svg width="156" height="156" viewBox="0 0 156 156">
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F0ECF8" stroke-width="20"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#00C48C" stroke-width="20"
+              stroke-dasharray="183 168" stroke-dashoffset="88" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#A100FF" stroke-width="20"
+              stroke-dasharray="168 183" stroke-dashoffset="-95" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+          </svg>
+          <div class="donut-center"><div class="dc-num">31</div><div class="dc-lbl">Total</div></div>
+        </div>
+        <div class="donut-legend" style="width:100%">
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--teal)"></div><span class="dl-label">Hybrid (Strategy + Execution)</span></div><div class="dl-val">52%</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-label">Strategy Focus</span></div><div class="dl-val">48%</div></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <p style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">A well-balanced team by profile. Both segments show strong daily usage — differentiation is in sophistication, not access.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Overview</div>
+      <div class="bar-chart">
+        <div class="bc-row"><div class="bc-lbl">Analyst</div><div class="bc-track"><div class="bc-fill" style="width:90%;background:var(--purple)"></div></div><div class="bc-val">9</div></div>
+        <div class="bc-row"><div class="bc-lbl">Intern</div><div class="bc-track"><div class="bc-fill" style="width:70%;background:var(--purple-light)"></div></div><div class="bc-val">7</div></div>
+        <div class="bc-row"><div class="bc-lbl">Consultant</div><div class="bc-track"><div class="bc-fill" style="width:60%;background:var(--teal)"></div></div><div class="bc-val">6</div></div>
+        <div class="bc-row"><div class="bc-lbl">Manager</div><div class="bc-track"><div class="bc-fill" style="width:40%;background:var(--gold)"></div></div><div class="bc-val">4</div></div>
+        <div class="bc-row"><div class="bc-lbl">Sr. Manager</div><div class="bc-track"><div class="bc-fill" style="width:40%;background:var(--gold)"></div></div><div class="bc-val">4</div></div>
+        <div class="bc-row"><div class="bc-lbl">MD</div><div class="bc-track"><div class="bc-fill" style="width:10%;background:var(--red)"></div></div><div class="bc-val">1</div></div>
+      </div>
+      <div class="divider"></div>
+      <p style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">Junior concentration is expected — but sparse senior representation in high-maturity usage is a structural gap worth addressing explicitly.</p>
+    </div>
+
+    <div class="col">
+      <div class="hero-dark">
+        <div class="card-title-light">Key Signal</div>
+        <div style="font-size:1.9rem;font-weight:900;letter-spacing:-0.04em;line-height:1;margin-bottom:0.35rem;background:linear-gradient(90deg,#E080FF,#00BAFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">84%</div>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.5;">of the team sits in the mid-maturity band (Practitioner + Advanced). A concentrated cohort ready to move together with the right nudge.</div>
+      </div>
+    </div>
+  </div>
+  <!-- GUIDE CARD: Level up maturity -->
+  <div class="guide-card" onclick="openGuide('guide-maturity')">
+    <div class="guide-card-icon">📖</div>
+    <div class="guide-card-text">
+      <div class="guide-card-label">84% mid-band · Ready to move together</div>
+      <div class="guide-card-title">Want to move from Practitioner to Advanced?</div>
+      <div class="guide-card-sub">The ChatGPT Operating Manual — a structured document that makes the model behave like a senior consultant from the first message.</div>
+    </div>
+    <div class="guide-card-cta">Open guide →</div>
+  </div>
+</section>
+<section class="panel" id="panel-productivity">
+  <div class="panel-header">
+    <div class="panel-eyebrow">Section 02 · Productivity</div>
+    <h1 class="panel-title">AI accelerates drafting —<br><span class="hl">not analytics</span></h1>
+    <div class="rule"></div>
+    <p class="panel-sub">Content and synthesis tasks score 4.0+. Analytical and structured tasks — SQL, hypothesis generation, issue trees — remain largely untouched. A 1.9-point gap separates top from bottom.</p>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-chip teal">
+      <div class="sc-num">4.3</div>
+      <div class="sc-label">Top score /5</div>
+      <div class="sc-sub">Doc summarization</div>
+    </div>
+    <div class="stat-chip">
+      <div class="sc-num">29%</div>
+      <div class="sc-label">Report &gt;50% gain</div>
+      <div class="sc-sub">Transformative value cohort</div>
+    </div>
+    <div class="stat-chip red">
+      <div class="sc-num">2.3</div>
+      <div class="sc-label">Lowest score /5</div>
+      <div class="sc-sub">SQL &amp; task prioritization</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Task Effectiveness (avg / 5)</div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Doc summarization</span><span class="prog-score" style="color:var(--teal)">4.3</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:86%;background:var(--teal)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Exec summary writing</span><span class="prog-score" style="color:var(--teal)">4.1</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:82%;background:var(--teal)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Email drafting</span><span class="prog-score" style="color:var(--teal)">4.0</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:80%;background:var(--teal)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Meeting summarization</span><span class="prog-score" style="color:var(--purple)">3.9</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:78%;background:var(--purple)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Slide drafting</span><span class="prog-score" style="color:var(--purple)">3.8</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:76%;background:var(--purple)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Problem framing</span><span class="prog-score" style="color:var(--purple)">3.7</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:74%;background:var(--purple)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Storyline development</span><span class="prog-score" style="color:var(--purple)">3.7</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:74%;background:var(--purple)"></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Hypothesis generation</span><span class="prog-score" style="color:var(--gold)">2.9</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:58%;background:var(--gold)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">Quantitative analysis</span><span class="prog-score" style="color:var(--red)">2.7</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:54%;background:var(--red)"></div></div>
+      </div>
+      <div class="prog-item">
+        <div class="prog-header"><span class="prog-label">SQL / data queries</span><span class="prog-score" style="color:var(--red)">2.3</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:46%;background:var(--red)"></div></div>
+      </div>
+      <div class="prog-item" style="margin-bottom:0">
+        <div class="prog-header"><span class="prog-label">Task prioritization</span><span class="prog-score" style="color:var(--red)">2.3</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:46%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="card-title">Top Use Areas</div>
+        <div class="wc-grid">
+          <div class="wc-tile"><div class="wc-word">Slides</div><div class="wc-desc">Drafting &amp; structuring</div></div>
+          <div class="wc-tile"><div class="wc-word">Research</div><div class="wc-desc">Synthesis &amp; summary</div></div>
+          <div class="wc-tile"><div class="wc-word">Email</div><div class="wc-desc">Drafting &amp; replies</div></div>
+          <div class="wc-tile"><div class="wc-word">Structure</div><div class="wc-desc">Storyline &amp; framing</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Productivity Gain Distribution</div>
+        <div class="bar-chart">
+          <div class="bc-row"><div class="bc-lbl">&lt;10% gain</div><div class="bc-track"><div class="bc-fill" style="width:10%;background:var(--border2)"></div></div><div class="bc-val">1</div></div>
+          <div class="bc-row"><div class="bc-lbl">10–30% gain</div><div class="bc-track"><div class="bc-fill" style="width:51%;background:var(--purple-light)"></div></div><div class="bc-val">10</div></div>
+          <div class="bc-row"><div class="bc-lbl">30–50% gain</div><div class="bc-track"><div class="bc-fill" style="width:56%;background:var(--purple)"></div></div><div class="bc-val">11</div></div>
+          <div class="bc-row"><div class="bc-lbl">&gt;50% gain</div><div class="bc-track"><div class="bc-fill" style="width:46%;background:var(--teal)"></div></div><div class="bc-val">9</div></div>
+        </div>
+        <div style="margin-top:1rem;padding:0.75rem 1rem;background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:0.6rem;font-size:0.79rem;color:#006B4F;line-height:1.5;">
+          <strong>9 people report &gt;50% productivity gain.</strong> These are the habits worth systematizing across the team.
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="hero-dark">
+        <div class="card-title-light">Performance Delta</div>
+        <div style="display:flex;align-items:flex-end;gap:1.25rem;margin-bottom:0.5rem;">
+          <div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.2rem;">Top task</div>
+            <div style="font-size:2rem;font-weight:900;letter-spacing:-0.04em;color:#00C48C;">4.3</div>
+          </div>
+          <div style="color:rgba(255,255,255,0.25);font-size:1.3rem;padding-bottom:0.3rem;">vs</div>
+          <div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.2rem;">Bottom task</div>
+            <div style="font-size:2rem;font-weight:900;letter-spacing:-0.04em;color:#F87171;">2.3</div>
+          </div>
+        </div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.65);line-height:1.5;">A 1.9-point gap between the team's strongest and weakest AI task areas — entirely addressable with targeted enablement.</div>
+      </div>
+    </div>
+  </div>
+  <!-- GUIDE CARD: Power user tips -->
+  <div class="guide-card" onclick="openGuide('guide-productivity')">
+    <div class="guide-card-icon">⚡</div>
+    <div class="guide-card-text">
+      <div class="guide-card-label">29% report &gt;50% gain · Learn their habits</div>
+      <div class="guide-card-title">Want to unlock higher productivity from AI?</div>
+      <div class="guide-card-sub">ChatGPT Power User tips, advanced settings & techniques used by the top performers on the team.</div>
+    </div>
+    <div class="guide-card-cta">Open guide →</div>
+  </div>
+</section>
+
+<!-- ════════════════════ PROMPTING ════════════════════ -->
+<section class="panel" id="panel-prompting">
+  <div class="panel-header">
+    <div class="panel-eyebrow">Section 03 · Prompting</div>
+    <h1 class="panel-title">Skill exists —<br><span class="hl">standards do not</span></h1>
+    <div class="rule"></div>
+    <p class="panel-sub">87% already structure their prompts. 58% want to improve. The team is primed — it needs a framework to converge on, not more training to unlock interest.</p>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-chip teal">
+      <div class="sc-num">87%</div>
+      <div class="sc-label">Structure their prompts</div>
+    </div>
+    <div class="stat-chip gold">
+      <div class="sc-num">58%</div>
+      <div class="sc-label">Want to improve</div>
+    </div>
+    <div class="stat-chip">
+      <div class="sc-num">10 <span style="font-size:1rem;font-weight:600;color:var(--text-muted)">/ 31</span></div>
+      <div class="sc-label">Follow guidelines</div>
+    </div>
+    <div class="stat-chip red">
+      <div class="sc-num">3</div>
+      <div class="sc-label">Formal framework users</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Prompting Approach</div>
+      <div class="donut-wrap" style="flex-direction:column;align-items:flex-start;gap:1.25rem;">
+        <div class="donut-svg-pos">
+          <svg width="156" height="156" viewBox="0 0 156 156">
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F0ECF8" stroke-width="20"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#A100FF" stroke-width="20"
+              stroke-dasharray="184 168" stroke-dashoffset="88" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#00C48C" stroke-width="20"
+              stroke-dasharray="124 228" stroke-dashoffset="-96" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F59E0B" stroke-width="20"
+              stroke-dasharray="35 317" stroke-dashoffset="-220" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#E2D5F5" stroke-width="20"
+              stroke-dasharray="10 342" stroke-dashoffset="-255" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+          </svg>
+          <div class="donut-center"><div class="dc-num">31</div><div class="dc-lbl">Total</div></div>
+        </div>
+        <div class="donut-legend" style="width:100%">
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-label">Structured context</span></div><div class="dl-val">16</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--teal)"></div><span class="dl-label">Iterative refinement</span></div><div class="dl-val">11</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--gold)"></div><span class="dl-label">Formal frameworks</span></div><div class="dl-val">3</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--border2)"></div><span class="dl-label">Simple / ad hoc</span></div><div class="dl-val">1</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Stance on Guidelines</div>
+      <div class="donut-wrap" style="flex-direction:column;align-items:flex-start;gap:1.25rem;">
+        <div class="donut-svg-pos">
+          <svg width="156" height="156" viewBox="0 0 156 156">
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F0ECF8" stroke-width="20"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F59E0B" stroke-width="26"
+              stroke-dasharray="205 147" stroke-dashoffset="88" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#00C48C" stroke-width="20"
+              stroke-dasharray="113 239" stroke-dashoffset="-117" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#E2D5F5" stroke-width="16"
+              stroke-dasharray="35 317" stroke-dashoffset="-230" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+          </svg>
+          <div class="donut-center"><div class="dc-num" style="color:var(--gold)">58%</div><div class="dc-lbl">Want more</div></div>
+        </div>
+        <div class="donut-legend" style="width:100%">
+          <div class="dl-row">
+            <div class="dl-left"><div class="dl-dot" style="background:var(--gold)"></div><span class="dl-label" style="font-weight:700;color:var(--text)">Want to improve</span></div>
+            <div class="dl-val" style="color:var(--gold)">18</div>
+          </div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--teal)"></div><span class="dl-label">Already follow guidelines</span></div><div class="dl-val">10</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--border2)"></div><span class="dl-label">Not necessary</span></div><div class="dl-val">3</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card" style="background:var(--bg2);">
+        <div class="card-title">What a Framework Covers</div>
+        <div style="display:flex;flex-direction:column;gap:0.55rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+            <div style="width:26px;height:26px;border-radius:0.45rem;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--purple);flex-shrink:0;">R</div>
+            <span><strong style="color:var(--text)">Role</strong> — set the persona and expertise level</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+            <div style="width:26px;height:26px;border-radius:0.45rem;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--teal);flex-shrink:0;">C</div>
+            <span><strong style="color:var(--text)">Context</strong> — project, client, and goal</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+            <div style="width:26px;height:26px;border-radius:0.45rem;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--gold);flex-shrink:0;">C</div>
+            <span><strong style="color:var(--text)">Constraints</strong> — length, tone, what to avoid</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+            <div style="width:26px;height:26px;border-radius:0.45rem;background:var(--red-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--red);flex-shrink:0;">O</div>
+            <span><strong style="color:var(--text)">Output format</strong> — table, bullets, slide, code</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- GUIDE CARD: Prompting improvement -->
+  <div class="guide-card" onclick="openGuide('guide-prompting')">
+    <div class="guide-card-icon">📐</div>
+    <div class="guide-card-text">
+      <div class="guide-card-label">58% want to improve · Resource available</div>
+      <div class="guide-card-title">Want to level up your prompting skills?</div>
+      <div class="guide-card-sub">Frameworks, attributes, best practices & the 5 P's — everything you need to write better prompts today.</div>
+    </div>
+    <div class="guide-card-cta">Open guide →</div>
+  </div>
+</section>
+<section class="panel" id="panel-agents">
+  <div class="panel-header">
+    <div class="panel-eyebrow">Section 04 · Agents</div>
+    <h1 class="panel-title">Experimentation high —<br><span class="hl">reuse is zero</span></h1>
+    <div class="rule"></div>
+    <p class="panel-sub">23 people have built agents. Multiple have built the same ones, independently. No shared registry, no quality standard, and no reuse infrastructure exists.</p>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-chip">
+      <div class="sc-num">23</div>
+      <div class="sc-label">Have built agents</div>
+      <div class="sc-sub">74% of the team</div>
+    </div>
+    <div class="stat-chip red">
+      <div class="sc-num">17</div>
+      <div class="sc-label">Experimental only</div>
+      <div class="sc-sub">Built once, never shared</div>
+    </div>
+    <div class="stat-chip teal">
+      <div class="sc-num">6</div>
+      <div class="sc-label">Use regularly</div>
+      <div class="sc-sub">The pattern to replicate</div>
+    </div>
+    <div class="stat-chip gold">
+      <div class="sc-num">7</div>
+      <div class="sc-label">Want to build</div>
+      <div class="sc-sub">Ready pipeline — need onboarding</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Agent Usage Status</div>
+      <div class="donut-wrap" style="flex-direction:column;align-items:flex-start;gap:1.25rem;">
+        <div class="donut-svg-pos">
+          <svg width="156" height="156" viewBox="0 0 156 156">
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F0ECF8" stroke-width="20"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#A100FF" stroke-width="20"
+              stroke-dasharray="195 157" stroke-dashoffset="88" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#00C48C" stroke-width="20"
+              stroke-dasharray="67 285" stroke-dashoffset="-107" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#F59E0B" stroke-width="20"
+              stroke-dasharray="81 271" stroke-dashoffset="-174" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+            <circle cx="78" cy="78" r="56" fill="none" stroke="#E2D5F5" stroke-width="20"
+              stroke-dasharray="10 342" stroke-dashoffset="-255" stroke-linecap="butt" transform="rotate(-90 78 78)"/>
+          </svg>
+          <div class="donut-center"><div class="dc-num">31</div><div class="dc-lbl">Total</div></div>
+        </div>
+        <div class="donut-legend" style="width:100%">
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-label">Experimental only</span></div><div class="dl-val">17</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--teal)"></div><span class="dl-label">Use regularly</span></div><div class="dl-val">6</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--gold)"></div><span class="dl-label">Want to build</span></div><div class="dl-val">7</div></div>
+          <div class="dl-row"><div class="dl-left"><div class="dl-dot" style="background:var(--border2)"></div><span class="dl-label">Unsure / not yet</span></div><div class="dl-val">1</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Known Agents Built</div>
+      <div class="usecase-list">
+        <div class="usecase-item">
+          <div class="usecase-dot" style="background:var(--red)"></div>
+          <span>Proposal / RFP generator</span>
+          <span class="usecase-badge">3× duplicate</span>
+        </div>
+        <div class="usecase-item">
+          <div class="usecase-dot" style="background:var(--purple)"></div>
+          <span>Steerco deck builder</span>
+        </div>
+        <div class="usecase-item">
+          <div class="usecase-dot" style="background:var(--purple)"></div>
+          <span>Credential generator</span>
+        </div>
+        <div class="usecase-item">
+          <div class="usecase-dot" style="background:var(--teal)"></div>
+          <span>CV / profile matcher</span>
+        </div>
+        <div class="usecase-item">
+          <div class="usecase-dot" style="background:var(--teal)"></div>
+          <span>Onboarding agent</span>
+        </div>
+        <div class="usecase-item">
+          <div class="usecase-dot" style="background:var(--gold)"></div>
+          <span>Meeting summarizer &amp; action extractor</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <p style="font-size:0.79rem;color:var(--text-muted);line-height:1.5;">The Proposal/RFP agent has been built by <strong style="color:var(--red)">3+ people independently</strong>.</p>
+    </div>
+
+    <div class="col">
+      <div class="contrast-strip">
+        <div class="cs-side dark">
+          <div class="cs-tag">Siloed experiments</div>
+          <div class="cs-num">17</div>
+          <div class="cs-desc">Built once, not shared — personal tools that die with the project.</div>
+        </div>
+        <div class="cs-side light">
+          <div class="cs-tag">Systematic users</div>
+          <div class="cs-num">6</div>
+          <div class="cs-desc">Use agents regularly — the benchmark pattern to replicate.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- GUIDE CARD: Claude Skills for agents -->
+  <div class="guide-card" onclick="openGuide('guide-agents')">
+    <div class="guide-card-icon">🤖</div>
+    <div class="guide-card-text">
+      <div class="guide-card-label">7 want to build · Claude skills available</div>
+      <div class="guide-card-title">Ready to build reusable agents with Claude?</div>
+      <div class="guide-card-sub">Learn how Claude Skills work — write once, trigger with a slash command, and get consistent outputs every time.</div>
+    </div>
+    <div class="guide-card-cta">Open guide →</div>
+  </div>
+</section>
+<section class="panel" id="panel-insights">
+  <div class="panel-header">
+    <div class="panel-eyebrow">Section 05 · Synthesis</div>
+    <h1 class="panel-title">Individual excellence —<br>vs. <span class="hl">team capability</span></h1>
+    <div class="rule"></div>
+    <p class="panel-sub">Exceptional individual adoption across every dimension. The deficit is entirely collective: standards, reuse, governance, shared assets. All fixable with targeted interventions.</p>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="card mb-5">
+    <table class="sum-table">
+      <thead>
+        <tr>
+          <th>Area</th><th>Key Number</th><th>Insight</th><th>Pain Point</th><th>Focus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Profile</td>
+          <td><span class="key-num" style="color:var(--teal)">94%</span> daily</td>
+          <td>Baseline is set — daily use is the norm, not a novelty</td>
+          <td>Usage is uncoordinated; no shared quality standard</td>
+          <td><span class="tag-badge tb-t">Scale</span> Access → consistent quality</td>
+        </tr>
+        <tr>
+          <td>Maturity</td>
+          <td><span class="key-num" style="color:var(--purple)">84%</span> mid-band</td>
+          <td>High individual proficiency — prompt structuring is common</td>
+          <td>Only 13% are Builders; no team-level workflows</td>
+          <td><span class="tag-badge tb-p">Elevate</span> Develop Builder-level skills</td>
+        </tr>
+        <tr>
+          <td>Productivity</td>
+          <td><span class="key-num" style="color:var(--teal)">29%</span> at &gt;50% gain</td>
+          <td>Top cohort gets transformative value — learn from them</td>
+          <td>Gap between top and median user is wide and widening</td>
+          <td><span class="tag-badge tb-t">Close gap</span> Systematize top habits</td>
+        </tr>
+        <tr>
+          <td>Task Areas</td>
+          <td><span class="key-num" style="color:var(--teal)">4.3</span> vs <span class="key-num" style="color:var(--red)">2.3</span></td>
+          <td>Content and synthesis deeply embedded; analytics underused</td>
+          <td>SQL &amp; analytical tasks are the highest-value gap</td>
+          <td><span class="tag-badge tb-r">Address</span> Analytical AI enablement</td>
+        </tr>
+        <tr>
+          <td>Prompting</td>
+          <td><span class="key-num" style="color:var(--gold)">58%</span> want to improve</td>
+          <td>Motivation is high — 58% want to improve</td>
+          <td>No shared standard; output quality varies by individual</td>
+          <td><span class="tag-badge tb-p">Codify</span> Team prompting framework</td>
+        </tr>
+        <tr>
+          <td>Agents</td>
+          <td><span class="key-num" style="color:var(--purple)">17</span> experimental</td>
+          <td>Agent literacy exists — people can build and have built real agents</td>
+          <td>Siloed; duplicate work; no registry; no quality criteria</td>
+          <td><span class="tag-badge tb-r">Govern</span> Shared agent library</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Critical Pain Points — condensed -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem;">Critical pain points</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+
+      <!-- Pain 1 -->
+      <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--red);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:1.1rem;right:1.25rem;font-size:1.6rem;opacity:0.08;">⚠</div>
+        <div style="font-size:0.62rem;font-weight:800;letter-spacing:0.13em;text-transform:uppercase;color:var(--red);margin-bottom:0.6rem;">Quality gap</div>
+        <div style="font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.25;margin-bottom:0.65rem;letter-spacing:-0.01em;">No shared standard — output quality depends entirely on who's prompting</div>
+        <p style="font-size:0.79rem;color:var(--text-muted);line-height:1.55;margin-bottom:1rem;">87% structure prompts already, but each in their own way. 58% want to improve and have nowhere to converge.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--red-bg);color:#991B1B;border:1px solid var(--red-border);">Prompting</span>
+          <span style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--red-bg);color:#991B1B;border:1px solid var(--red-border);">Profile</span>
+        </div>
+      </div>
+
+      <!-- Pain 2 -->
+      <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--gold);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:1.1rem;right:1.25rem;font-size:1.6rem;opacity:0.08;">📊</div>
+        <div style="font-size:0.62rem;font-weight:800;letter-spacing:0.13em;text-transform:uppercase;color:#92400E;margin-bottom:0.6rem;">Analytical gap</div>
+        <div style="font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.25;margin-bottom:0.65rem;letter-spacing:-0.01em;">AI is strong on content, weak on the core of consulting — SQL, quant &amp; issue trees</div>
+        <p style="font-size:0.79rem;color:var(--text-muted);line-height:1.55;margin-bottom:1rem;">SQL scores 2.3/5 and task prioritization 2.3/5 — the lowest areas, yet the highest-value for a data &amp; strategy team.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--gold-bg);color:#92400E;border:1px solid var(--gold-border);">Productivity</span>
+          <span style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--gold-bg);color:#92400E;border:1px solid var(--gold-border);">Task areas</span>
+        </div>
+      </div>
+
+      <!-- Pain 3 -->
+      <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--purple);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:1.1rem;right:1.25rem;font-size:1.6rem;opacity:0.08;">🔁</div>
+        <div style="font-size:0.62rem;font-weight:800;letter-spacing:0.13em;text-transform:uppercase;color:var(--purple-dark);margin-bottom:0.6rem;">Reuse gap</div>
+        <div style="font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.25;margin-bottom:0.65rem;letter-spacing:-0.01em;">Agents built independently — opportunity to consolidate and scale what already works</div>
+        <p style="font-size:0.79rem;color:var(--text-muted);line-height:1.55;margin-bottom:1rem;">17 experimental agents built across the team. The Proposal agent has been developed multiple times — consolidating into shared, versioned assets would multiply the value already created.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <span style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--purple-bg);color:var(--purple-dark);border:1px solid var(--purple-bg2);">Agents</span>
+          <span style="font-size:0.65rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--purple-bg);color:var(--purple-dark);border:1px solid var(--purple-bg2);">Maturity</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem;">Recommendations</div>
+  <div class="grid-3">
+    <div class="card" style="border-top:4px solid var(--purple);">
+      <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:0.75rem;">Rec. 01</div>
+      <div style="font-size:1.35rem;font-weight:800;color:var(--text);margin-bottom:0.75rem;line-height:1.2;letter-spacing:-0.02em;">Shared Prompting Standard</div>
+      <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.25rem;">58% want to improve but have no framework to converge on. Convert individual intelligence into a team asset using a 4-part template: Role, Context, Constraints, Output format.</p>
+      <div style="display:flex;flex-direction:column;gap:0.45rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--purple);border-radius:50%;flex-shrink:0;"></div>87% already structure prompts — just codify it</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--purple);border-radius:50%;flex-shrink:0;"></div>Only 3 use formal frameworks — massive upside</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--purple);border-radius:50%;flex-shrink:0;"></div>18 of 31 explicitly want to improve</div>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:4px solid var(--teal);">
+      <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#006B4F;margin-bottom:0.75rem;">Rec. 02</div>
+      <div style="font-size:1.35rem;font-weight:800;color:var(--text);margin-bottom:0.75rem;line-height:1.2;letter-spacing:-0.02em;">Agent Library &amp; Registry</div>
+      <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.25rem;">17 have built agents; multiple have built the same things independently. A shared catalog with named owners and quality review would multiply the value already created inside the team.</p>
+      <div style="display:flex;flex-direction:column;gap:0.45rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--teal);border-radius:50%;flex-shrink:0;"></div>Proposal agent built 3+ times independently</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--teal);border-radius:50%;flex-shrink:0;"></div>7 more want to build — need clear onboarding</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--teal);border-radius:50%;flex-shrink:0;"></div>Only 6 of 31 use agents systematically today</div>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:4px solid var(--gold);">
+      <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#92400E;margin-bottom:0.75rem;">Rec. 03</div>
+      <div style="font-size:1.35rem;font-weight:800;color:var(--text);margin-bottom:0.75rem;line-height:1.2;letter-spacing:-0.02em;">Analytical AI Enablement</div>
+      <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.25rem;">The team excels in content generation. But SQL, issue trees, hypothesis generation, and quant modeling are significantly underused — the highest-value gap for a data &amp; strategy team.</p>
+      <div style="display:flex;flex-direction:column;gap:0.45rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--gold);border-radius:50%;flex-shrink:0;"></div>SQL / queries: lowest score at 2.3 / 5</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--gold);border-radius:50%;flex-shrink:0;"></div>Issue trees + hypothesis gen: 2.9 / 5 — underdeveloped</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.78rem;color:var(--text-mid);"><div style="width:5px;height:5px;background:var(--gold);border-radius:50%;flex-shrink:0;"></div>52% hybrid profiles have skills — need the right prompts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ GUIDE MODALS ════════════════════ -->
+
+<!-- MODAL: Prompting Guide -->
+<div class="guide-overlay" id="guide-prompting">
+  <div class="guide-modal">
+    <div class="guide-modal-header">
+      <div>
+        <div class="guide-modal-title">📐 Prompting Guide</div>
+        <div class="guide-modal-sub">Frameworks, attributes and best practices to raise your output quality immediately</div>
+      </div>
+      <button class="guide-modal-close" onclick="closeGuide('guide-prompting')">✕</button>
+    </div>
+    <div class="guide-modal-body">
+      <div class="guide-tabs">
+        <button class="guide-tab active" onclick="switchGuideTab(this,'gp-1')">The 5 P's Framework</button>
+        <button class="guide-tab" onclick="switchGuideTab(this,'gp-2')">Prompt Attributes</button>
+        <button class="guide-tab" onclick="switchGuideTab(this,'gp-3')">Best Practices</button>
+      </div>
+
+      <!-- TAB 1: 5 P's -->
+      <div class="guide-tab-panel active" id="gp-1">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;">
+          <div>
+            <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1.25rem;">The Framework</div>
+            <div style="display:flex;flex-direction:column;">
+              <div style="display:flex;align-items:stretch;border-bottom:1px solid #f3f3f3;">
+                <div style="width:4px;background:#6366F1;border-radius:4px;flex-shrink:0;margin:8px 0;"></div>
+                <div style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;">
+                  <div style="font-size:0.82rem;font-weight:800;color:#6366F1;min-width:24px;">01</div>
+                  <div><div style="font-size:0.88rem;font-weight:800;color:#6366F1;margin-bottom:0.2rem;">PURPOSE</div><div style="font-size:0.8rem;color:var(--text-mid);">Define the goal and what needs to be achieved</div></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:stretch;border-bottom:1px solid #f3f3f3;">
+                <div style="width:4px;background:#9333EA;border-radius:4px;flex-shrink:0;margin:8px 0;"></div>
+                <div style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;">
+                  <div style="font-size:0.82rem;font-weight:800;color:#9333EA;min-width:24px;">02</div>
+                  <div><div style="font-size:0.88rem;font-weight:800;color:#9333EA;margin-bottom:0.2rem;">PRESENTATION</div><div style="font-size:0.8rem;color:var(--text-mid);">Indicate the expected output format and structure</div></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:stretch;border-bottom:1px solid #f3f3f3;">
+                <div style="width:4px;background:#C026D3;border-radius:4px;flex-shrink:0;margin:8px 0;"></div>
+                <div style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;">
+                  <div style="font-size:0.82rem;font-weight:800;color:#C026D3;min-width:24px;">03</div>
+                  <div><div style="font-size:0.88rem;font-weight:800;color:#C026D3;margin-bottom:0.2rem;">PARAMETERS</div><div style="font-size:0.8rem;color:var(--text-mid);">Set your constraints and rules the model must follow</div></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:stretch;border-bottom:1px solid #f3f3f3;">
+                <div style="width:4px;background:#F97316;border-radius:4px;flex-shrink:0;margin:8px 0;"></div>
+                <div style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;">
+                  <div style="font-size:0.82rem;font-weight:800;color:#F97316;min-width:24px;">04</div>
+                  <div><div style="font-size:0.88rem;font-weight:800;color:#F97316;margin-bottom:0.2rem;">PERSPECTIVE</div><div style="font-size:0.8rem;color:var(--text-mid);">Provide context on yourself and your audience</div></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:stretch;">
+                <div style="width:4px;background:#F59E0B;border-radius:4px;flex-shrink:0;margin:8px 0;"></div>
+                <div style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;">
+                  <div style="font-size:0.82rem;font-weight:800;color:#F59E0B;min-width:24px;">05</div>
+                  <div><div style="font-size:0.88rem;font-weight:800;color:#F59E0B;margin-bottom:0.2rem;">POLISH</div><div style="font-size:0.8rem;color:var(--text-mid);">Refine and reiterate to enhance your result</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1.25rem;">Full Prompt Example</div>
+            <div style="background:var(--bg2);border:1px solid var(--border);border-radius:1rem;overflow:hidden;">
+              <div style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);">
+                <div style="font-size:1.3rem;font-weight:900;color:#6366F1;opacity:0.5;flex-shrink:0;line-height:1;">&raquo;</div>
+                <div style="font-size:0.82rem;color:var(--text-mid);line-height:1.55;font-style:italic;">Identify the top 3 AI use cases for a retail client looking to reduce operational costs by 15% in the next 12 months.</div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);">
+                <div style="font-size:1.3rem;font-weight:900;color:#9333EA;opacity:0.5;flex-shrink:0;line-height:1;">&raquo;</div>
+                <div style="font-size:0.82rem;color:var(--text-mid);line-height:1.55;font-style:italic;">Present as an executive summary table with columns: Use Case, Business Impact, Implementation Timeline, and Estimated ROI.</div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);">
+                <div style="font-size:1.3rem;font-weight:900;color:#C026D3;opacity:0.5;flex-shrink:0;line-height:1;">&raquo;</div>
+                <div style="font-size:0.82rem;color:var(--text-mid);line-height:1.55;font-style:italic;">Focus only on proven AI technologies — no experimental solutions.</div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);">
+                <div style="font-size:1.3rem;font-weight:900;color:#F97316;opacity:0.5;flex-shrink:0;line-height:1;">&raquo;</div>
+                <div style="font-size:0.82rem;color:var(--text-mid);line-height:1.55;font-style:italic;">Assume you are a senior Accenture consultant presenting to the CFO and COO of a Fortune 500 retailer.</div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.25rem;">
+                <div style="font-size:1.3rem;font-weight:900;color:#F59E0B;opacity:0.5;flex-shrink:0;line-height:1;">&raquo;</div>
+                <div style="font-size:0.82rem;color:var(--text-mid);line-height:1.55;font-style:italic;">Review the output and prioritize use cases by highest ROI first.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Prompt Attributes -->
+      <div class="guide-tab-panel" id="gp-2">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;">
+          <div>
+            <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">General Considerations</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;margin-bottom:1.5rem;">
+              <div style="background:var(--purple-bg);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;text-align:center;">
+                <div style="width:44px;height:44px;border-radius:50%;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;font-size:1.2rem;">💡</div>
+                <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Clarity & Simplicity</div>
+                <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.5;">Use clear, full sentences. Avoid unnecessary complexity.</div>
+              </div>
+              <div style="background:var(--purple-bg);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;text-align:center;">
+                <div style="width:44px;height:44px;border-radius:50%;background:white;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;font-size:1.2rem;">🎯</div>
+                <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Specificity</div>
+                <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.5;">Be precise — generic prompts lead to generic responses.</div>
+              </div>
+            </div>
+            <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Prompt Attributes</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.6rem;padding:0.75rem 0.9rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Prompt Length</div><div style="font-size:0.73rem;color:var(--text-muted);line-height:1.4;font-style:italic;">e.g. 'more specific', '3 paragraphs'</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.6rem;padding:0.75rem 0.9rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Domain Info</div><div style="font-size:0.73rem;color:var(--text-muted);line-height:1.4;font-style:italic;">e.g. age group, profession, interest</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.6rem;padding:0.75rem 0.9rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Avoid Acronyms</div><div style="font-size:0.73rem;color:var(--text-muted);line-height:1.4;font-style:italic;">e.g. spell out 'S&amp;OP' fully</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.6rem;padding:0.75rem 0.9rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Perspectives</div><div style="font-size:0.73rem;color:var(--text-muted);line-height:1.4;font-style:italic;">e.g. 'objective', 'neutral', 'critical'</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.6rem;padding:0.75rem 0.9rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Tone of Prompt</div><div style="font-size:0.73rem;color:var(--text-muted);line-height:1.4;font-style:italic;">e.g. 'casual', 'urgent', 'formal'</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.6rem;padding:0.75rem 0.9rem;"><div style="font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Audience</div><div style="font-size:0.73rem;color:var(--text-muted);line-height:1.4;font-style:italic;">e.g. 'economic impact', 'productivity'</div></div>
+            </div>
+            <div style="margin-top:0.75rem;border:2px solid var(--purple);border-radius:0.9rem;padding:1rem 1.25rem;background:white;">
+              <div style="font-size:0.88rem;font-weight:700;color:var(--purple);margin-bottom:0.3rem;">Define the Role — 'Flip the role'</div>
+              <div style="font-size:0.77rem;color:var(--text-muted);">e.g. 'devil's advocate', 'consulting partner', 'expert in supply chain'</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">The RCCO Framework</div>
+            <div style="display:flex;flex-direction:column;gap:0.55rem;background:var(--bg2);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+                <div style="width:32px;height:32px;border-radius:0.45rem;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--purple);flex-shrink:0;">R</div>
+                <div><strong style="color:var(--text);">Role</strong> — set the persona and expertise level</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+                <div style="width:32px;height:32px;border-radius:0.45rem;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--teal);flex-shrink:0;">C</div>
+                <div><strong style="color:var(--text);">Context</strong> — project, client, and goal</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+                <div style="width:32px;height:32px;border-radius:0.45rem;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--gold);flex-shrink:0;">C</div>
+                <div><strong style="color:var(--text);">Constraints</strong> — length, tone, what to avoid</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;color:var(--text-mid);">
+                <div style="width:32px;height:32px;border-radius:0.45rem;background:var(--red-bg);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:var(--red);flex-shrink:0;">O</div>
+                <div><strong style="color:var(--text);">Output format</strong> — table, bullets, slide, code</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Best Practices -->
+      <div class="guide-tab-panel" id="gp-3">
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;">A structured approach to consistently deliver executive-ready, high-quality outputs.</p>
+        <div style="display:flex;flex-direction:column;gap:1rem;max-width:680px;">
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+            <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Structure Before Speed</div><div style="font-size:0.8rem;color:var(--text-muted);">Use Thinking mode and Projects to create consistency across outputs.</div></div>
+          </div>
+          <div style="height:1px;background:var(--border);margin-left:2.5rem;"></div>
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+            <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Define the Source of Truth</div><div style="font-size:0.8rem;color:var(--text-muted);">Clarify numbers vs narrative ownership before drafting.</div></div>
+          </div>
+          <div style="height:1px;background:var(--border);margin-left:2.5rem;"></div>
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+            <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Target Precisely</div><div style="font-size:0.8rem;color:var(--text-muted);">File name + exact location + task + format in every prompt.</div></div>
+          </div>
+          <div style="height:1px;background:var(--border);margin-left:2.5rem;"></div>
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+            <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Iterate with Intent</div><div style="font-size:0.8rem;color:var(--text-muted);">Refine like a manager, not like a user. Each prompt builds on the last.</div></div>
+          </div>
+          <div style="height:1px;background:var(--border);margin-left:2.5rem;"></div>
+          <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+            <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Validate Before Exporting</div><div style="font-size:0.8rem;color:var(--text-muted);">Run a QA pass and assumptions check before sharing externally.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Productivity / Power User Guide -->
+<div class="guide-overlay" id="guide-productivity">
+  <div class="guide-modal">
+    <div class="guide-modal-header">
+      <div>
+        <div class="guide-modal-title">⚡ Power User Guide</div>
+        <div class="guide-modal-sub">ChatGPT advanced techniques used by the top-performing cohort on the team</div>
+      </div>
+      <button class="guide-modal-close" onclick="closeGuide('guide-productivity')">✕</button>
+    </div>
+    <div class="guide-modal-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:2rem;">
+        <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="font-size:1.4rem;margin-bottom:0.75rem;">⚙️</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Use the Right Settings</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Select the appropriate thinking mode and depth so the first pass has structure and logic. Choose memory type based on project needs.</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="font-size:1.4rem;margin-bottom:0.75rem;">📁</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Maintain Project Discipline</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">One project per client or workstream, with clearly named source files so the model can reliably reference "what is true."</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="font-size:1.4rem;margin-bottom:0.75rem;">🎯</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Be Explicit About the Outcome</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Clearly state the result you expect and the level of quality required. Don't assume the model will infer your standards.</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="font-size:1.4rem;margin-bottom:0.75rem;">❓</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Force Clarification Upfront</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Ask the model to raise key questions before drafting to ensure accuracy. This saves one full revision cycle.</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="font-size:1.4rem;margin-bottom:0.75rem;">🎙️</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Voice-to-Text + Precise Iteration</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Brief thoroughly through spoken word, then edit outputs like a manager — iterate until client-ready.</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);">
+          <div style="font-size:1.4rem;margin-bottom:0.75rem;">🔍</div>
+          <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Use Extended Thinking Wisely</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Reserve it for hard multi-step strategy problems, complex quantitative tasks, or high-risk executive messaging.</div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--purple-deeper),#3D0080);border-radius:1rem;padding:1.5rem 2rem;">
+        <div style="font-size:0.65rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:0.75rem;">Starter Prompt — Force Clarification</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.85);line-height:1.7;font-style:italic;background:rgba(255,255,255,0.07);border-radius:0.75rem;padding:1.1rem 1.4rem;">
+          "Before you start drafting, ask me the 3–5 clarifying questions that would most improve the quality and accuracy of your output. Wait for my answers before proceeding."
+        </div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:0.75rem;">Use this at the start of any complex task to eliminate rework.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Agents / Claude Skills Guide -->
+<div class="guide-overlay" id="guide-agents">
+  <div class="guide-modal" style="max-width:980px;">
+    <div class="guide-modal-header">
+      <div>
+        <div class="guide-modal-title">🤖 Agents & Claude Skills</div>
+        <div class="guide-modal-sub">What the team has built · How to build reusable agents with Claude Skills</div>
+      </div>
+      <button class="guide-modal-close" onclick="closeGuide('guide-agents')">✕</button>
+    </div>
+    <div class="guide-modal-body">
+      <div class="guide-tabs">
+        <button class="guide-tab active" onclick="switchGuideTab(this,'ga-1')">🗂️ Our Team's Agents</button>
+        <button class="guide-tab" onclick="switchGuideTab(this,'ga-2')">⚙️ Claude Skills — Build Your Own</button>
+      </div>
+
+      <!-- TAB 1: Our Team's Agents -->
+      <div class="guide-tab-panel active" id="ga-1">
+        <!-- Stats banner -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.85rem;margin-bottom:1.75rem;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:0.85rem;padding:1rem 1.25rem;">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--purple);line-height:1;margin-bottom:0.25rem;">23</div>
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Have built agents</div>
+            <div style="font-size:0.73rem;color:var(--text-muted);margin-top:0.1rem;">74% of the team</div>
+          </div>
+          <div style="background:var(--red-bg);border:1px solid var(--red-border);border-radius:0.85rem;padding:1rem 1.25rem;">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--red);line-height:1;margin-bottom:0.25rem;">17</div>
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#991B1B;">Experimental only</div>
+            <div style="font-size:0.73rem;color:var(--text-muted);margin-top:0.1rem;">Built once, never shared</div>
+          </div>
+          <div style="background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:0.85rem;padding:1rem 1.25rem;">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--teal);line-height:1;margin-bottom:0.25rem;">6</div>
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#006B4F;">Use regularly</div>
+            <div style="font-size:0.73rem;color:var(--text-muted);margin-top:0.1rem;">The pattern to replicate</div>
+          </div>
+          <div style="background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:0.85rem;padding:1rem 1.25rem;">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:0.25rem;">7</div>
+            <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#92400E;">Want to build</div>
+            <div style="font-size:0.73rem;color:var(--text-muted);margin-top:0.1rem;">Ready pipeline</div>
+          </div>
+        </div>
+
+        <!-- Agent list -->
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.85rem;">Known agents built by the team</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;">
+          <!-- Proposal / RFP — duplicate flag -->
+          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;background:var(--red-bg);border:1px solid var(--red-border);border-radius:0.75rem;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--text);">Proposal / RFP generator</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.1rem;">Generates full proposals and RFP responses — the team's most-used agent type</div>
+            </div>
+            <div style="display:flex;gap:0.5rem;align-items:center;flex-shrink:0;">
+              <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--red-bg);color:#991B1B;border:1px solid var(--red-border);">⚠ 3× duplicate</span>
+              <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:#FEF2F2;color:#991B1B;border:1px solid #FCA5A5;">Experimental</span>
+            </div>
+          </div>
+          <!-- Steerco deck builder -->
+          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;background:var(--bg2);border:1px solid var(--border);border-radius:0.75rem;transition:all 0.15s;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--text);">Steerco deck builder</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.1rem;">Structures steering committee presentation content and narrative flow</div>
+            </div>
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--purple-bg);color:var(--purple-dark);border:1px solid var(--purple-bg2);flex-shrink:0;">Experimental</span>
+          </div>
+          <!-- Credential generator -->
+          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;background:var(--bg2);border:1px solid var(--border);border-radius:0.75rem;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--text);">Credential generator</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.1rem;">Creates tailored credential write-ups for bids and client presentations</div>
+            </div>
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--purple-bg);color:var(--purple-dark);border:1px solid var(--purple-bg2);flex-shrink:0;">Experimental</span>
+          </div>
+          <!-- CV / profile matcher -->
+          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:0.75rem;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--text);">CV / profile matcher</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.1rem;">Matches consultant profiles to project requirements automatically</div>
+            </div>
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--teal-bg);color:#006B4F;border:1px solid var(--teal-border);flex-shrink:0;">In regular use</span>
+          </div>
+          <!-- Onboarding agent -->
+          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:0.75rem;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--text);">Onboarding agent</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.1rem;">Guides new joiners through project context, tools and team norms</div>
+            </div>
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--teal-bg);color:#006B4F;border:1px solid var(--teal-border);flex-shrink:0;">In regular use</span>
+          </div>
+          <!-- Meeting summarizer -->
+          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:0.75rem;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem;font-weight:700;color:var(--text);">Meeting summarizer &amp; action extractor</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.1rem;">Processes meeting transcripts into structured summaries with owners and due dates</div>
+            </div>
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2rem;background:var(--gold-bg);color:#92400E;border:1px solid var(--gold-border);flex-shrink:0;">Experimental</span>
+          </div>
+        </div>
+
+        <!-- Call to action -->
+        <div style="background:var(--purple-bg);border:1px solid var(--purple-bg2);border-radius:0.85rem;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
+          <span style="font-size:1.4rem;flex-shrink:0;">💡</span>
+          <div>
+            <div style="font-size:0.84rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">The Proposal agent has been built 3+ times independently</div>
+            <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.5;">A shared registry with named owners would eliminate duplication and turn these one-off experiments into team assets. Switch to the <strong>Claude Skills</strong> tab to see how to do it.</div>
+          </div>
+          <button onclick="switchGuideTab(document.querySelector('#guide-agents .guide-tab:last-child'),'ga-2')" style="background:var(--purple);color:white;border:none;border-radius:0.6rem;padding:0.5rem 1rem;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Build with Skills →</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: Claude Skills -->
+      <div class="guide-tab-panel" id="ga-2">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;">
+          <div style="display:flex;flex-direction:column;gap:1.5rem;">
+            <div>
+              <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">What are Claude Skills?</div>
+              <div style="background:var(--purple-bg);border:1px solid var(--border);border-radius:1rem;padding:1.4rem;">
+                <div style="display:flex;align-items:flex-start;gap:0.9rem;margin-bottom:1rem;">
+                  <div style="width:38px;height:38px;border-radius:0.6rem;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">⚙️</div>
+                  <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">Reusable instructions for Claude</div><div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;">A Skill is a saved set of instructions stored in Claude Code that automatically shapes how Claude responds — like a template it always follows.</div></div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:0.9rem;margin-bottom:1rem;">
+                  <div style="width:38px;height:38px;border-radius:0.6rem;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">🔁</div>
+                  <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">Triggered by a slash command</div><div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;">You invoke a skill by typing <code style="background:white;border:1px solid var(--border);border-radius:0.3rem;padding:0.1rem 0.4rem;font-size:0.78rem;">/skill-name</code> in Claude. It follows those instructions exactly, every time.</div></div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:0.9rem;">
+                  <div style="width:38px;height:38px;border-radius:0.6rem;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">🎯</div>
+                  <div><div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">Consistent quality, zero re-prompting</div><div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;">Write the instructions once. Claude always produces outputs that follow your standards — no repeating yourself each session.</div></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">How to Create a Skill</div>
+              <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                <div style="display:flex;gap:0.9rem;align-items:flex-start;background:white;border:1px solid var(--border);border-radius:0.75rem;padding:0.9rem 1rem;">
+                  <div style="width:26px;height:26px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+                  <div><div style="font-size:0.84rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Describe the skill to Claude in the chat</div><div style="font-size:0.78rem;color:var(--text-muted);">e.g. "Create a skill called acn-proposal that always follows our proposal structure."</div></div>
+                </div>
+                <div style="display:flex;gap:0.9rem;align-items:flex-start;background:white;border:1px solid var(--border);border-radius:0.75rem;padding:0.9rem 1rem;">
+                  <div style="width:26px;height:26px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+                  <div><div style="font-size:0.84rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Claude creates the folder and file automatically</div><div style="font-size:0.78rem;color:var(--text-muted);">Claude saves it in your project so it's available every time you open a new session.</div></div>
+                </div>
+                <div style="display:flex;gap:0.9rem;align-items:flex-start;background:white;border:1px solid var(--border);border-radius:0.75rem;padding:0.9rem 1rem;">
+                  <div style="width:26px;height:26px;border-radius:50%;background:var(--purple);color:white;font-size:0.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+                  <div><div style="font-size:0.84rem;font-weight:700;color:var(--text);margin-bottom:0.2rem;">Invoke it any time with /skill-name</div><div style="font-size:0.78rem;color:var(--text-muted);">Type <code style="background:var(--bg2);border:1px solid var(--border);border-radius:0.3rem;padding:0.1rem 0.35rem;">/acn-proposal</code> at the start of any session and it follows your instructions automatically.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1rem;">Skills you can build today</div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div style="background:white;border:1px solid var(--border);border-radius:0.9rem;padding:1.1rem 1.25rem;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:1rem;">
+                <div style="width:36px;height:36px;border-radius:0.6rem;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">🌐</div>
+                <div style="flex:1;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.25rem;"><div style="font-size:0.86rem;font-weight:700;color:var(--text);">Accenture-branded HTML</div><code style="background:var(--purple-bg);color:var(--purple);border-radius:0.4rem;padding:0.1rem 0.5rem;font-size:0.72rem;">/accenture-html</code></div><div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">Every HTML page follows SC&amp;O brand, colours, fonts and layout — no repeating the style guide each time.</div></div>
+              </div>
+              <div style="background:white;border:1px solid var(--border);border-radius:0.9rem;padding:1.1rem 1.25rem;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:1rem;">
+                <div style="width:36px;height:36px;border-radius:0.6rem;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">📊</div>
+                <div style="flex:1;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.25rem;"><div style="font-size:0.86rem;font-weight:700;color:var(--text);">Executive slide structure</div><code style="background:var(--purple-bg);color:var(--purple);border-radius:0.4rem;padding:0.1rem 0.5rem;font-size:0.72rem;">/acn-deck</code></div><div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">Define your preferred deck structure, so-what framing and action slide — consistent every time.</div></div>
+              </div>
+              <div style="background:white;border:1px solid var(--border);border-radius:0.9rem;padding:1.1rem 1.25rem;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:1rem;">
+                <div style="width:36px;height:36px;border-radius:0.6rem;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">✉️</div>
+                <div style="flex:1;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.25rem;"><div style="font-size:0.86rem;font-weight:700;color:var(--text);">Client email tone</div><code style="background:var(--purple-bg);color:var(--purple);border-radius:0.4rem;padding:0.1rem 0.5rem;font-size:0.72rem;">/client-email</code></div><div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">Set your tone, sign-off style and format once. Every client email comes out ready to send.</div></div>
+              </div>
+              <div style="background:white;border:1px solid var(--red-border);border-radius:0.9rem;padding:1.1rem 1.25rem;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:1rem;">
+                <div style="width:36px;height:36px;border-radius:0.6rem;background:var(--red-bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">📋</div>
+                <div style="flex:1;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.25rem;"><div style="font-size:0.86rem;font-weight:700;color:var(--text);">Proposal / RFP generator</div><code style="background:var(--red-bg);color:#991B1B;border-radius:0.4rem;padding:0.1rem 0.5rem;font-size:0.72rem;">/acn-proposal</code></div><div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">The team's most duplicated agent — perfect candidate to codify as a shared Skill with a named owner.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Maturity / ChatGPT Operating Manual -->
+<div class="guide-overlay" id="guide-maturity">
+  <div class="guide-modal">
+    <div class="guide-modal-header">
+      <div>
+        <div class="guide-modal-title">📖 ChatGPT Operating Manual</div>
+        <div class="guide-modal-sub">A structured document that trains ChatGPT to behave like a senior consultant from the first message</div>
+      </div>
+      <button class="guide-modal-close" onclick="closeGuide('guide-maturity')">✕</button>
+    </div>
+    <div class="guide-modal-body">
+      <div style="background:linear-gradient(135deg,#6600A3,#9B30FF);border-radius:1rem;padding:1.5rem 2rem;margin-bottom:2rem;display:flex;align-items:flex-start;gap:1.25rem;">
+        <div style="font-size:1.6rem;flex-shrink:0;">📖</div>
+        <div>
+          <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:0.35rem;">Purpose</div>
+          <div style="font-size:0.92rem;font-weight:700;color:white;margin-bottom:0.4rem;">Strategy and Consulting Operating Manual to Upload to ChatGPT</div>
+          <div style="font-size:0.82rem;color:rgba(255,255,255,0.72);line-height:1.6;">A structured document that, when uploaded to a ChatGPT Project, trains the model to behave like an Accenture consultant — producing executive-ready, assumption-aware outputs from the very first message.</div>
+          <a href="https://collections.accenture.com/fileviewer/6929becf-5d0b-4b72-a744-caabf807021e" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:0.5rem;padding:0.45rem 1rem;font-size:0.8rem;font-weight:600;color:white;text-decoration:none;">📄 Download from Collections →</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+        <div>
+          <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1.25rem;">How to include the manual</div>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);text-align:center;">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--purple);color:white;font-size:1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">1</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Download the Manual</div>
+              <div style="font-size:0.79rem;color:var(--text-muted);line-height:1.45;">Access the Collections file and download <strong>Strategy and Consulting Operating Manual to Upload to ChatGPT_v2</strong>.</div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);text-align:center;">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--purple);color:white;font-size:1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">2</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Upload it to a Project</div>
+              <div style="font-size:0.79rem;color:var(--text-muted);line-height:1.45;">Add the document to your current ChatGPT Project — one project per client or workstream.</div>
+            </div>
+            <div style="background:white;border:1px solid var(--border);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow);text-align:center;">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--purple);color:white;font-size:1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">3</div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Activate it in the Chat</div>
+              <div style="font-size:0.79rem;color:var(--text-muted);line-height:1.45;">Start the session with: <em>"Read ACN_Consulting_Manual.docx to support your thinking in this Project."</em></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);margin-bottom:1.25rem;">Benefits</div>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            <div style="background:white;border-left:4px solid var(--purple);border-radius:0 0.75rem 0.75rem 0;padding:1rem 1.25rem;box-shadow:var(--shadow);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">Executive-Ready by Default</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.4;">Structured and decision-focused outputs from the very first draft — no reformatting needed.</div>
+            </div>
+            <div style="background:white;border-left:4px solid var(--teal);border-radius:0 0.75rem 0.75rem 0;padding:1rem 1.25rem;box-shadow:var(--shadow);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">Higher Accuracy &amp; Lower Risk</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.4;">Explicit assumptions and built-in QA reduce errors before outputs reach the client.</div>
+            </div>
+            <div style="background:white;border-left:4px solid var(--gold);border-radius:0 0.75rem 0.75rem 0;padding:1rem 1.25rem;box-shadow:var(--shadow);">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">Faster, More Consistent Delivery</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.4;">Standard templates and prompts eliminate rework across the team.</div>
+            </div>
+            <div style="background:var(--purple-bg);border:1px solid var(--purple-bg2);border-radius:0.75rem;padding:1rem 1.25rem;margin-top:0.25rem;">
+              <div style="font-size:0.8rem;font-weight:700;color:var(--purple-dark);margin-bottom:0.3rem;">Why this matters for maturity</div>
+              <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.5;">84% of the team is in the mid-band — the gap to Advanced isn't skill, it's structure. This manual bridges it immediately.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /panels -->
+
+<script>
+const tabs   = document.querySelectorAll('.nav-tab');
+const panels = document.querySelectorAll('.panel');
+const panelMap = {
+  overview:     'panel-overview',
+  adoption:     'panel-adoption',
+  productivity: 'panel-productivity',
+  prompting:    'panel-prompting',
+  agents:       'panel-agents',
+  insights:     'panel-insights',
+};
+const order = ['overview','adoption','productivity','prompting','agents','insights'];
+
+function activate(name) {
+  if (!panelMap[name]) return;
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === name));
+  panels.forEach(p => p.classList.toggle('active', p.id === panelMap[name]));
+  window.scrollTo({ top:0, behavior:'smooth' });
+  history.replaceState(null, '', '#' + name);
+}
+
+tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.panel)));
+
+document.addEventListener('keydown', e => {
+  if (document.querySelector('.guide-overlay.open')) {
+    if (e.key === 'Escape') document.querySelectorAll('.guide-overlay.open').forEach(m => m.classList.remove('open'));
+    return;
+  }
+  const cur = order.findIndex(n => document.getElementById(panelMap[n])?.classList.contains('active'));
+  if (e.key === 'ArrowRight' && cur < order.length - 1) activate(order[cur + 1]);
+  if (e.key === 'ArrowLeft'  && cur > 0)                activate(order[cur - 1]);
+});
+
+const hash = location.hash.replace('#','');
+activate(panelMap[hash] ? hash : 'overview');
+
+// Guide modal functions
+function openGuide(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeGuide(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+// Close on overlay click
+document.querySelectorAll('.guide-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeGuide(overlay.id);
+  });
+});
+
+// Guide tab switching
+function switchGuideTab(btn, panelId) {
+  const modal = btn.closest('.guide-modal-body');
+  modal.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+  modal.querySelectorAll('.guide-tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+</script>
+</body>
+</html>
