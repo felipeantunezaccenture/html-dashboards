@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Consell — 2025</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --white: #ffffff;
+    --border: #dde3ea;
+    --text: #1e293b;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --sidebar-bg: #1e293b;
+    --sidebar-text: #cbd5e1;
+    --sidebar-active-bg: rgba(255,255,255,0.12);
+    --sidebar-active: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+    --radius: 12px;
+
+    /* palette */
+    --c1: #6366f1; /* indigo */
+    --c2: #0ea5e9; /* sky */
+    --c3: #10b981; /* emerald */
+    --c4: #f59e0b; /* amber */
+    --c5: #ef4444; /* red */
+    --c6: #8b5cf6; /* violet */
+    --c7: #06b6d4; /* cyan */
+    --c8: #ec4899; /* pink */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; }
+
+  /* LAYOUT */
+  .shell { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: 230px; flex-shrink: 0; background: var(--sidebar-bg); display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-header { padding: 24px 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-header h1 { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.3; }
+  .sidebar-header p { font-size: 11px; color: var(--sidebar-text); margin-top: 4px; }
+  .nav-group { padding: 14px 8px 2px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #64748b; padding-left: 16px; }
+  .nav-btn { display: flex; align-items: center; gap: 10px; width: calc(100% - 16px); margin: 2px 8px; padding: 9px 12px; background: none; border: none; color: var(--sidebar-text); cursor: pointer; font-size: 13px; border-radius: 8px; text-align: left; transition: all .15s; }
+  .nav-btn:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .nav-btn.active { background: var(--sidebar-active-bg); color: #fff; font-weight: 600; }
+  .nav-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* MAIN */
+  .main { flex: 1; padding: 28px 32px; min-width: 0; }
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-size: 24px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 10px; }
+  .page-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  /* BADGE */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .badge-indigo { background: #eef2ff; color: #4f46e5; }
+  .badge-sky { background: #e0f2fe; color: #0284c7; }
+  .badge-amber { background: #fef3c7; color: #b45309; }
+  .badge-violet { background: #f5f3ff; color: #7c3aed; }
+  .badge-emerald { background: #d1fae5; color: #047857; }
+  .badge-rose { background: #ffe4e6; color: #be123c; }
+  .badge-cyan { background: #cffafe; color: #0e7490; }
+  .badge-teal { background: #ccfbf1; color: #0f766e; }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .kpi { background: var(--white); border-radius: var(--radius); padding: 18px 16px 14px; box-shadow: var(--shadow); border-top: 4px solid #e2e8f0; position: relative; overflow: hidden; }
+  .kpi::before { content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px; border-radius: 50%; opacity: .07; transform: translate(20px, -20px); background: currentColor; }
+  .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); margin-bottom: 8px; }
+  .kpi-value { font-size: 24px; font-weight: 800; line-height: 1; }
+  .kpi-delta { font-size: 12px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .delta-up { color: #059669; }
+  .delta-down { color: #dc2626; }
+  .delta-neu { color: var(--text3); }
+
+  /* CHART GRID */
+  .charts-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .chart-card { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .chart-card h3 { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .chart-card h3::before { content: ''; display: inline-block; width: 3px; height: 14px; border-radius: 2px; }
+  .chart-wrap { position: relative; height: 230px; }
+
+  /* TABLES */
+  .table-card { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; overflow-x: auto; }
+  .table-card h3 { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .table-card h3::before { content: ''; display: inline-block; width: 3px; height: 14px; border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #f8fafc; }
+  th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); padding: 10px 12px; text-align: right; border-bottom: 2px solid var(--border); }
+  th:first-child { text-align: left; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; text-align: right; font-variant-numeric: tabular-nums; color: var(--text2); }
+  td:first-child { text-align: left; color: var(--text); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+  .tr-total td { font-weight: 700; color: var(--text) !important; background: #f8fafc; border-top: 2px solid var(--border); }
+  .pos { color: #059669 !important; font-weight: 600; }
+  .neg { color: #dc2626 !important; font-weight: 600; }
+  .neutral { color: var(--text2) !important; }
+
+  /* STATUS PILLS */
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+  .pill-green { background: #d1fae5; color: #047857; }
+  .pill-red { background: #fee2e2; color: #b91c1c; }
+  .pill-yellow { background: #fef3c7; color: #92400e; }
+  .pill-blue { background: #dbeafe; color: #1d4ed8; }
+
+  /* SECTION ACCENTS - each company gets a color */
+  .section-neil .kpi { border-top-color: #8b5cf6; }
+  .section-neil .chart-card h3::before { background: #8b5cf6; }
+  .section-neil .table-card h3::before { background: #8b5cf6; }
+
+  .section-laimpa .kpi { border-top-color: #6366f1; }
+  .section-laimpa .chart-card h3::before { background: #6366f1; }
+  .section-laimpa .table-card h3::before { background: #6366f1; }
+
+  .section-egara .kpi { border-top-color: #06b6d4; }
+  .section-egara .chart-card h3::before { background: #06b6d4; }
+  .section-egara .table-card h3::before { background: #06b6d4; }
+
+  .section-dequitex .kpi { border-top-color: #0ea5e9; }
+  .section-dequitex .chart-card h3::before { background: #0ea5e9; }
+  .section-dequitex .table-card h3::before { background: #0ea5e9; }
+
+  .section-veltex .kpi { border-top-color: #10b981; }
+  .section-veltex .chart-card h3::before { background: #10b981; }
+  .section-veltex .table-card h3::before { background: #10b981; }
+
+  .section-alcazar .kpi { border-top-color: #f59e0b; }
+  .section-alcazar .chart-card h3::before { background: #f59e0b; }
+  .section-alcazar .table-card h3::before { background: #f59e0b; }
+
+  .section-multicinemes .kpi { border-top-color: #ef4444; }
+  .section-multicinemes .chart-card h3::before { background: #ef4444; }
+  .section-multicinemes .table-card h3::before { background: #ef4444; }
+
+  .section-vialaietana .kpi { border-top-color: #ec4899; }
+  .section-vialaietana .chart-card h3::before { background: #ec4899; }
+  .section-vialaietana .table-card h3::before { background: #ec4899; }
+
+  .section-overview .kpi { border-top-color: #475569; }
+  .section-overview .chart-card h3::before { background: #475569; }
+  .section-overview .table-card h3::before { background: #475569; }
+
+  /* Q1 2026 PANEL */
+  .q1-banner { background: linear-gradient(135deg,#fffbeb,#fef9c3); border:1px solid #fde68a; border-radius:var(--radius); padding:12px 18px; margin:24px 0 14px; }
+  .q1-banner h4 { font-size:13px; font-weight:700; color:#78350f; margin-bottom:3px; }
+  .q1-banner p { font-size:11px; color:#92400e; }
+  .q1-badge { display:inline-block; background:#f59e0b; color:#fff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; margin-right:8px; vertical-align:middle; }
+
+  /* ANNUAL 2025 PANEL */
+  .annual-banner { background: linear-gradient(135deg,#f8fafc,#f1f5f9); border:1px solid #dde3ea; border-radius:var(--radius); padding:12px 18px; margin:28px 0 14px; }
+  .annual-banner h4 { font-size:13px; font-weight:700; color:#334155; margin-bottom:3px; }
+  .annual-banner p { font-size:11px; color:#64748b; }
+  .annual-badge { display:inline-block; background:#475569; color:#fff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; margin-right:8px; vertical-align:middle; }
+
+  /* SECTOR OVERVIEW ACCENTS */
+  .section-holding .kpi { border-top-color: #8b5cf6; }
+  .section-holding .chart-card h3::before { background: #8b5cf6; }
+  .section-holding .table-card h3::before { background: #8b5cf6; }
+  .section-textil .kpi { border-top-color: #0ea5e9; }
+  .section-textil .chart-card h3::before { background: #0ea5e9; }
+  .section-textil .table-card h3::before { background: #0ea5e9; }
+  .section-cinemes .kpi { border-top-color: #f59e0b; }
+  .section-cinemes .chart-card h3::before { background: #f59e0b; }
+  .section-cinemes .table-card h3::before { background: #f59e0b; }
+
+  @media (max-width: 900px) { .two-col, .charts-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>Consell d'Administració</h1>
+    <p>Q4 2025 + Q1 2026 · Maig 2026</p>
+  </div>
+
+  <div class="nav-group">Resum</div>
+  <button class="nav-btn active" onclick="show('overview',this)">
+    <span class="nav-dot" style="background:#94a3b8"></span>Visió General
+  </button>
+
+  <div class="nav-group">Visions Sectorials</div>
+  <button class="nav-btn" onclick="show('holding',this)">
+    <span class="nav-dot" style="background:#8b5cf6"></span>Holding &amp; Immobiliari
+  </button>
+  <button class="nav-btn" onclick="show('textil',this)">
+    <span class="nav-dot" style="background:#0ea5e9"></span>Tèxtil
+  </button>
+  <button class="nav-btn" onclick="show('cinemes',this)">
+    <span class="nav-dot" style="background:#f59e0b"></span>Cinemes
+  </button>
+
+  <div class="nav-group">Holding / Immobiliàri</div>
+  <button class="nav-btn" onclick="show('neil',this)">
+    <span class="nav-dot" style="background:#8b5cf6"></span>Neil S.L.
+  </button>
+  <button class="nav-btn" onclick="show('laimpa',this)">
+    <span class="nav-dot" style="background:#6366f1"></span>Laimpa S.L.
+  </button>
+  <button class="nav-btn" onclick="show('egara',this)">
+    <span class="nav-dot" style="background:#06b6d4"></span>Esp. Egara S.A.
+  </button>
+
+  <div class="nav-group">Tèxtil</div>
+  <button class="nav-btn" onclick="show('dequitex',this)">
+    <span class="nav-dot" style="background:#0ea5e9"></span>Grup Dequitex
+  </button>
+  <button class="nav-btn" onclick="show('veltex',this)">
+    <span class="nav-dot" style="background:#10b981"></span>Veltex S.A.
+  </button>
+
+  <div class="nav-group">Cinemes</div>
+  <button class="nav-btn" onclick="show('alcazar',this)">
+    <span class="nav-dot" style="background:#f59e0b"></span>Alcazar Cinema
+  </button>
+  <button class="nav-btn" onclick="show('multicinemes',this)">
+    <span class="nav-dot" style="background:#ef4444"></span>Multicinemes Eix Macià
+  </button>
+
+  <div class="nav-group">Lleure / Joc</div>
+  <button class="nav-btn" onclick="show('vialaietana',this)">
+    <span class="nav-dot" style="background:#ec4899"></span>Grup Via Laietana
+  </button>
+</nav>
+
+<main class="main">
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     OVERVIEW
+═══════════════════════════════════════════════════════════════════ -->
+<div id="overview" class="section section-overview active">
+  <div class="page-header">
+    <div class="page-title">Visió General del Portfolio</div>
+    <div class="page-sub">Resum executiu de totes les empreses · Exercici 2025</div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi" style="border-top-color:#ec4899">
+      <div class="kpi-label">Via Laietana — Resultat</div>
+      <div class="kpi-value" style="color:#ec4899">4.45M€</div>
+      <div class="kpi-delta delta-up">▲ +23% vs pressupost</div>
+    </div>
+    <div class="kpi" style="border-top-color:#0ea5e9">
+      <div class="kpi-label">ECIMA — Resultat Net</div>
+      <div class="kpi-value" style="color:#0ea5e9">1.77M€</div>
+      <div class="kpi-delta delta-up">▲ +60% vs 2024</div>
+    </div>
+    <div class="kpi" style="border-top-color:#10b981">
+      <div class="kpi-label">Veltex — Resultat Net</div>
+      <div class="kpi-value" style="color:#10b981">365K€</div>
+      <div class="kpi-delta delta-up">▲ +307% vs 2024</div>
+    </div>
+    <div class="kpi" style="border-top-color:#6366f1">
+      <div class="kpi-label">Laimpa — Resultat</div>
+      <div class="kpi-value" style="color:#6366f1">939K€</div>
+      <div class="kpi-delta delta-up">▲ +38% vs 2024</div>
+    </div>
+    <div class="kpi" style="border-top-color:#8b5cf6">
+      <div class="kpi-label">Neil — Resultat</div>
+      <div class="kpi-value" style="color:#8b5cf6">756K€</div>
+      <div class="kpi-delta delta-down">▼ -13% vs 2024</div>
+    </div>
+    <div class="kpi" style="border-top-color:#06b6d4">
+      <div class="kpi-label">Egara — Resultat</div>
+      <div class="kpi-value" style="color:#06b6d4">354K€</div>
+      <div class="kpi-delta delta-down">▼ -14% vs 2024</div>
+    </div>
+    <div class="kpi" style="border-top-color:#f59e0b">
+      <div class="kpi-label">Alcazar Cinema</div>
+      <div class="kpi-value" style="color:#f59e0b">-112K€</div>
+      <div class="kpi-delta delta-down">▼ Pèrdues 2025</div>
+    </div>
+    <div class="kpi" style="border-top-color:#ef4444">
+      <div class="kpi-label">Eix Macià</div>
+      <div class="kpi-value" style="color:#ef4444">-127K€</div>
+      <div class="kpi-delta delta-down">▼ Pèrdues 2025</div>
+    </div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">NOU · Q1 2026</span>Primers Resultats — Gener–Març 2026</h4>
+    <p>Neil i Laimpa amb fort impuls de dividends · ECIMA millora marges al 43.1% · Veltex al 97% del pressupost · Via Laietana Grup en ruta</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi" style="border-top-color:#8b5cf6">
+      <div class="kpi-label">Neil — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#8b5cf6">522K€</div>
+      <div class="kpi-delta delta-up">▲ +164% vs Q1 2025 (198K€)</div>
+    </div>
+    <div class="kpi" style="border-top-color:#6366f1">
+      <div class="kpi-label">Laimpa — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#6366f1">406K€</div>
+      <div class="kpi-delta delta-up">▲ +172% vs Q1 2025 (149K€)</div>
+    </div>
+    <div class="kpi" style="border-top-color:#06b6d4">
+      <div class="kpi-label">Egara — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#06b6d4">101K€</div>
+      <div class="kpi-delta delta-up">▲ +9% vs Q1 2025 (93K€)</div>
+    </div>
+    <div class="kpi" style="border-top-color:#0ea5e9">
+      <div class="kpi-label">ECIMA — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#0ea5e9">439K€</div>
+      <div class="kpi-delta delta-up">▲ +6.4% vs Q1 2025 · Marge 43.1%</div>
+    </div>
+    <div class="kpi" style="border-top-color:#10b981">
+      <div class="kpi-label">Veltex — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#10b981">143K€</div>
+      <div class="kpi-delta delta-neu">97% del pressupost (147K€)</div>
+    </div>
+    <div class="kpi" style="border-top-color:#ec4899">
+      <div class="kpi-label">Via Laietana Grup Q1 2026</div>
+      <div class="kpi-value" style="color:#ec4899">1.43M€</div>
+      <div class="kpi-delta delta-up">▲ 32% del pressupost anual (en ruta)</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3 style="--accent:#475569">Resultat Net per Empresa 2025</h3>
+      <div class="chart-wrap"><canvas id="chartOverviewBar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3 style="--accent:#475569">Pes de Facturació al Portfolio</h3>
+      <div class="chart-wrap"><canvas id="chartOverviewPie"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Q1 2025 vs Q1 2026 — Resultat per Empresa (€)</h3>
+      <div class="chart-wrap"><canvas id="chartQ1Compare"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Resum Executiu — Totes les Empreses</h3>
+    <table>
+      <thead><tr>
+        <th>Empresa</th><th>Sector</th><th>Facturació 2025</th>
+        <th>Resultat 2025</th><th>vs 2024</th><th>Estat</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Grup Via Laietana</td><td class="neutral">Lleure / Joc</td><td>48.95 M€</td><td class="pos">4,450,305 €</td><td class="pos">+23% vs pres.</td><td><span class="pill pill-green">●&nbsp;Excel·lent</span></td></tr>
+        <tr><td>ECIMA (Dequitex)</td><td class="neutral">Tèxtil tècnic</td><td>17.85 M€</td><td class="pos">1,768,511 €</td><td class="pos">+59%</td><td><span class="pill pill-green">●&nbsp;Excel·lent</span></td></tr>
+        <tr><td>DYEING (Dequitex)</td><td class="neutral">Tèxtil / tint</td><td>5.86 M€</td><td class="pos">227,891 €</td><td class="neg">-42%</td><td><span class="pill pill-yellow">●&nbsp;Atenció</span></td></tr>
+        <tr><td>Veltex S.A.</td><td class="neutral">Moquetes</td><td>3.77 M€</td><td class="pos">365,051 €</td><td class="pos">+307%</td><td><span class="pill pill-green">●&nbsp;Excel·lent</span></td></tr>
+        <tr><td>Laimpa S.L.</td><td class="neutral">Holding</td><td>1.10 M€</td><td class="pos">939,028 €</td><td class="pos">+38%</td><td><span class="pill pill-green">●&nbsp;Bo</span></td></tr>
+        <tr><td>Neil S.L.</td><td class="neutral">Holding</td><td>943 K€</td><td class="pos">756,173 €</td><td class="neg">-13%</td><td><span class="pill pill-yellow">●&nbsp;Atenció</span></td></tr>
+        <tr><td>Esp. Egara S.A.</td><td class="neutral">Immobiliàri</td><td>627 K€</td><td class="pos">354,034 €</td><td class="neg">-14%</td><td><span class="pill pill-yellow">●&nbsp;Atenció</span></td></tr>
+        <tr><td>Alcazar Cinema S.A.</td><td class="neutral">Cinema</td><td>1.49 M€</td><td class="neg">-111,547 €</td><td class="neg">Pèrdues</td><td><span class="pill pill-red">●&nbsp;Pèrdues</span></td></tr>
+        <tr><td>Multicinemes Eix Macià</td><td class="neutral">Cinema</td><td>1.11 M€</td><td class="neg">-127,461 €</td><td class="neg">Pèrdues</td><td><span class="pill pill-red">●&nbsp;Pèrdues</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     NEIL
+═══════════════════════════════════════════════════════════════════ -->
+<div id="neil" class="section section-neil">
+  <div class="page-header">
+    <div class="page-title">Neil S.L. <span class="badge badge-violet">Holding</span></div>
+    <div class="page-sub">Primers Resultats Q1 2026 · Compte d'explotació 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Primers Resultats — Gener–Març 2026</h4>
+    <p>Dividends Via Laietana rebuts: 483.421 € (+195% vs Q1 2025 de 164K€) — principal driver del fort creixement trimestral</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Ingressos Q1 2026</div>
+      <div class="kpi-value" style="color:#8b5cf6">555,374 €</div>
+      <div class="kpi-delta delta-up">▲ +133% vs Q1 2025 (238K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dividends Via Laietana Q1</div>
+      <div class="kpi-value" style="color:#ec4899">483,421 €</div>
+      <div class="kpi-delta delta-up">▲ +195% vs Q1 2025 (164K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">522,272 €</div>
+      <div class="kpi-delta delta-up">▲ +164% vs Q1 2025 (198K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Costos Q1 2026</div>
+      <div class="kpi-value" style="color:#dc2626">33,102 €</div>
+      <div class="kpi-delta delta-up">▼ -19% vs Q1 2025 (40.6K€)</div>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-bottom:20px">
+    <h3>Ingressos per Categoria — Q1 2025 vs Q1 2026 (€)</h3>
+    <div class="chart-wrap"><canvas id="chartNeilQ1"></canvas></div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Compte d'Explotació Acumulat — Gener–Desembre 2025</h4>
+    <p>Resultat 756.173 € (-13% vs 2024) · Dividends Via Laietana 656.109 € · Marge operatiu 80%</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Ingressos</div>
+      <div class="kpi-value" style="color:#8b5cf6">943,336 €</div>
+      <div class="kpi-delta delta-down">▼ -10.8% vs 2024 (1.06M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Ingressos Arrendaments</div>
+      <div class="kpi-value" style="color:#7c3aed">146,273 €</div>
+      <div class="kpi-delta delta-down">▼ -12.9% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dividends Rebuts</div>
+      <div class="kpi-value" style="color:#6d28d9">746,676 €</div>
+      <div class="kpi-delta delta-down">▼ -6.8% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Abans Impost.</div>
+      <div class="kpi-value" style="color:#059669">756,173 €</div>
+      <div class="kpi-delta delta-down">▼ -13.3% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Costos</div>
+      <div class="kpi-value" style="color:#dc2626">187,163 €</div>
+      <div class="kpi-delta delta-down">▼ +0.8% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Operatiu</div>
+      <div class="kpi-value" style="color:#059669">80.2%</div>
+      <div class="kpi-delta delta-neu">Molt eficient</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Ingressos per Categoria — 2024 vs 2025</h3>
+      <div class="chart-wrap"><canvas id="chartNeilBar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Composició d'Ingressos 2025</h3>
+      <div class="chart-wrap"><canvas id="chartNeilPie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Compte d'Explotació Detallat (€)</h3>
+    <table>
+      <thead><tr><th>Concepte</th><th>2025</th><th>2024</th><th>Variació</th></tr></thead>
+      <tbody>
+        <tr><td>Ingressos arrendaments</td><td>146,273</td><td>167,926</td><td class="neg">-12.9%</td></tr>
+        <tr><td>Prestació de serveis</td><td>37,504</td><td>50,757</td><td class="neg">-26.1%</td></tr>
+        <tr><td>Ingressos financers (Banc)</td><td>12,882</td><td>33,530</td><td class="neg">-61.6%</td></tr>
+        <tr><td>Dividends DESA</td><td>90,568</td><td>90,557</td><td class="pos">+0.0%</td></tr>
+        <tr><td>Dividends Via Laietana</td><td>656,109</td><td>694,163</td><td class="neg">-5.5%</td></tr>
+        <tr class="tr-total"><td>TOTAL INGRESSOS</td><td>943,336</td><td>1,058,156</td><td class="neg">-10.8%</td></tr>
+        <tr><td>Retribució admin.</td><td class="neg">-46,200</td><td class="neg">-46,200</td><td class="neutral">0.0%</td></tr>
+        <tr><td>Gastos explotació</td><td class="neg">-119,407</td><td class="neg">-61,688</td><td class="neg">+93.6%</td></tr>
+        <tr><td>Amortitzacions</td><td class="neg">-21,556</td><td class="neg">-21,618</td><td class="neutral">-0.3%</td></tr>
+        <tr class="tr-total"><td>RESULTAT ABANS IMPOSTOS</td><td class="pos">756,173</td><td class="pos">872,483</td><td class="neg">-13.3%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     LAIMPA
+═══════════════════════════════════════════════════════════════════ -->
+<div id="laimpa" class="section section-laimpa">
+  <div class="page-header">
+    <div class="page-title">Laimpa S.L. <span class="badge badge-indigo">Holding</span></div>
+    <div class="page-sub">Primers Resultats Q1 2026 · Compte d'explotació 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Primers Resultats — Gener–Març 2026</h4>
+    <p>Dividends Dequitex: 360.000 € (vs 30K€ Q1 2025) — impuls extraordinari al resultat trimestral</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Ingressos Q1 2026</div>
+      <div class="kpi-value" style="color:#6366f1">449,515 €</div>
+      <div class="kpi-delta delta-up">▲ +173% vs Q1 2025 (164K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dividends Dequitex Q1</div>
+      <div class="kpi-value" style="color:#0ea5e9">360,000 €</div>
+      <div class="kpi-delta delta-up">▲ +1.100% vs Q1 2025 (30K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">406,167 €</div>
+      <div class="kpi-delta delta-up">▲ +172% vs Q1 2025 (149K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Costos Q1 2026</div>
+      <div class="kpi-value" style="color:#dc2626">43,348 €</div>
+      <div class="kpi-delta delta-down">▼ +186% vs Q1 2025 (15.1K€)</div>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-bottom:20px">
+    <h3>Ingressos per Categoria — Q1 2025 vs Q1 2026 (€)</h3>
+    <div class="chart-wrap"><canvas id="chartLaimpaQ1"></canvas></div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Compte d'Explotació Acumulat — Gener–Desembre 2025</h4>
+    <p>Resultat 939.028 € (+38% vs 2024) · Dividends Dequitex 460K€ (impuls principal) · Marge operatiu 85.5%</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Ingressos</div>
+      <div class="kpi-value" style="color:#6366f1">1,097,792 €</div>
+      <div class="kpi-delta delta-up">▲ +38.7% vs 2024 (792K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dividends Dequitex</div>
+      <div class="kpi-value" style="color:#4f46e5">460,000 €</div>
+      <div class="kpi-delta delta-up">▲ +283% vs 2024 (120K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dividends Rebuts Total</div>
+      <div class="kpi-value" style="color:#4338ca">708,531 €</div>
+      <div class="kpi-delta delta-up">▲ +59.1% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Exercici</div>
+      <div class="kpi-value" style="color:#059669">939,028 €</div>
+      <div class="kpi-delta delta-up">▲ +38.4% vs 2024 (679K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Costos</div>
+      <div class="kpi-value" style="color:#dc2626">158,764 €</div>
+      <div class="kpi-delta delta-down">▼ +40.7% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Operatiu</div>
+      <div class="kpi-value" style="color:#059669">85.5%</div>
+      <div class="kpi-delta delta-up">Excel·lent eficiència</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Ingressos per Categoria — 2024 vs 2025</h3>
+      <div class="chart-wrap"><canvas id="chartLaimpaBar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Composició d'Ingressos 2025</h3>
+      <div class="chart-wrap"><canvas id="chartLaimpaPie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Compte d'Explotació Detallat (€)</h3>
+    <table>
+      <thead><tr><th>Concepte</th><th>2025</th><th>2024</th><th>Variació</th></tr></thead>
+      <tbody>
+        <tr><td>Ingressos arrendaments</td><td>123,454</td><td>126,127</td><td class="neg">-2.1%</td></tr>
+        <tr><td>Prestació serveis / retrib. admin.</td><td>147,550</td><td>16,779</td><td class="pos">+779%</td></tr>
+        <tr><td>Ingressos financers</td><td>118,256</td><td>203,138</td><td class="neg">-41.8%</td></tr>
+        <tr><td>Dividends DESA</td><td>90,728</td><td>90,718</td><td class="pos">+0.0%</td></tr>
+        <tr><td>Dividends Dequitex</td><td class="pos">460,000</td><td>120,000</td><td class="pos">+283%</td></tr>
+        <tr><td>Dividends Esp. Egara</td><td>34,755</td><td>184,698</td><td class="neg">-81.2%</td></tr>
+        <tr><td>Beneficis valors negociables</td><td>123,048</td><td>50,077</td><td class="pos">+145.7%</td></tr>
+        <tr class="tr-total"><td>TOTAL INGRESSOS</td><td>1,097,792</td><td>791,537</td><td class="pos">+38.7%</td></tr>
+        <tr><td>Gastos personal</td><td class="neg">-47,519</td><td class="neg">-47,501</td><td class="neutral">0.0%</td></tr>
+        <tr><td>Gastos explotació</td><td class="neg">-110,833</td><td class="neg">-62,307</td><td class="neg">+77.9%</td></tr>
+        <tr class="tr-total"><td>RESULTAT EXERCICI</td><td class="pos">939,028</td><td class="pos">678,682</td><td class="pos">+38.4%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     EGARA
+═══════════════════════════════════════════════════════════════════ -->
+<div id="egara" class="section section-egara">
+  <div class="page-header">
+    <div class="page-title">Espectacles Egara S.A. <span class="badge badge-cyan">Immobiliàri</span></div>
+    <div class="page-sub">Primers Resultats Q1 2026 · Compte d'explotació 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Primers Resultats — Gener–Març 2026</h4>
+    <p>Ingressos arrendaments +2.9% vs Q1 2025 · Resultat +9% vs Q1 2025 (92.8K€) · Costos estables</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Ingressos Q1 2026</div>
+      <div class="kpi-value" style="color:#06b6d4">160,938 €</div>
+      <div class="kpi-delta delta-up">▲ +2.8% vs Q1 2025 (156.6K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Arrendaments Q1 2026</div>
+      <div class="kpi-value" style="color:#0891b2">151,660 €</div>
+      <div class="kpi-delta delta-up">▲ +2.9% vs Q1 2025 (147.3K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">101,190 €</div>
+      <div class="kpi-delta delta-up">▲ +9% vs Q1 2025 (92.8K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Retrib. Admin. Q1 2026</div>
+      <div class="kpi-value" style="color:#dc2626">30,000 €</div>
+      <div class="kpi-delta delta-neu">Igual que Q1 2025 (sense canvi)</div>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-bottom:20px">
+    <h3>Ingressos i Costos — Q1 2025 vs Q1 2026 (€)</h3>
+    <div class="chart-wrap"><canvas id="chartEgaraQ1"></canvas></div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Compte d'Explotació Acumulat — Gener–Desembre 2025</h4>
+    <p>Resultat 354.034 € (-14% vs 2024) · Retribució admin. 120K€ (+300% vs 2024) va impactar el resultat</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Ingressos</div>
+      <div class="kpi-value" style="color:#06b6d4">626,990 €</div>
+      <div class="kpi-delta delta-up">▲ +2.1% vs 2024 (614K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Arrendaments</div>
+      <div class="kpi-value" style="color:#0891b2">589,877 €</div>
+      <div class="kpi-delta delta-up">▲ +2.3% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Abans Impostos</div>
+      <div class="kpi-value" style="color:#059669">354,034 €</div>
+      <div class="kpi-delta delta-down">▼ -14.2% vs 2024 (412K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Costos</div>
+      <div class="kpi-value" style="color:#dc2626">272,956 €</div>
+      <div class="kpi-delta delta-down">▼ +35.4% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Retrib. Admin. 2025</div>
+      <div class="kpi-value" style="color:#dc2626">120,000 €</div>
+      <div class="kpi-delta delta-down">▼ +300% vs 2024 (30K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Operatiu</div>
+      <div class="kpi-value" style="color:#d97706">56.5%</div>
+      <div class="kpi-delta delta-down">▼ -10 pp vs 2024 (67%)</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Ingressos vs Costos — 2024 i 2025</h3>
+      <div class="chart-wrap"><canvas id="chartEgaraBar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Impacte Retribució Admin. al Resultat</h3>
+      <div class="chart-wrap"><canvas id="chartEgaraBridge"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Compte d'Explotació Detallat (€)</h3>
+    <table>
+      <thead><tr><th>Concepte</th><th>2025</th><th>2024</th><th>Variació</th></tr></thead>
+      <tbody>
+        <tr><td>Ingressos arrendaments</td><td>589,877</td><td>576,786</td><td class="pos">+2.3%</td></tr>
+        <tr><td>Altres ingressos (Padró i Cabot)</td><td>37,113</td><td>37,113</td><td class="neutral">0.0%</td></tr>
+        <tr class="tr-total"><td>TOTAL INGRESSOS</td><td>626,990</td><td>613,900</td><td class="pos">+2.1%</td></tr>
+        <tr><td>Gastos personal</td><td class="neg">-82,677</td><td class="neg">-71,252</td><td class="neg">+16.0%</td></tr>
+        <tr><td>Retribució admin.</td><td class="neg">-120,000</td><td class="neg">-30,000</td><td class="neg">+300%</td></tr>
+        <tr><td>Seguretat Social</td><td class="neg">-26,588</td><td class="neg">-21,715</td><td class="neg">+22.4%</td></tr>
+        <tr><td>Gastos explotació (altres)</td><td class="neg">-43,691</td><td class="neg">-78,609</td><td class="pos">-44.4%</td></tr>
+        <tr class="tr-total"><td>TOTAL COSTOS</td><td class="neg">-272,956</td><td class="neg">-201,575</td><td class="neg">+35.4%</td></tr>
+        <tr class="tr-total"><td>RESULTAT ABANS IMPOSTOS</td><td class="pos">354,034</td><td class="pos">412,325</td><td class="neg">-14.2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     DEQUITEX
+═══════════════════════════════════════════════════════════════════ -->
+<div id="dequitex" class="section section-dequitex">
+  <div class="page-header">
+    <div class="page-title">Grup Dequitex <span class="badge badge-sky">Tèxtil Tècnic</span></div>
+    <div class="page-sub">Primers Resultats Q1 2026 · ECIMA SAU · Dyeing &amp; Finishing · Dequitex SL</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Primers Resultats — Gener–Març 2026 (ECIMA)</h4>
+    <p>Vendes ECIMA -4% vs Q1 2025 però marge contribució millora notablement: 43.1% vs 36.5% — millor eficiència operativa</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Vendes Netes ECIMA Q1 2026</div>
+      <div class="kpi-value" style="color:#0ea5e9">4.44 M€</div>
+      <div class="kpi-delta delta-down">▼ -4% vs Q1 2025 (4.62M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Contribució Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">43.1%</div>
+      <div class="kpi-delta delta-up">▲ +6.6 pp vs Q1 2025 (36.5%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat ECIMA Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">438,646 €</div>
+      <div class="kpi-delta delta-up">▲ +6.4% vs Q1 2025 (412K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Vendes Netes Dyeing Q1 2026</div>
+      <div class="kpi-value" style="color:#06b6d4">1.54 M€</div>
+      <div class="kpi-delta delta-neu">≈ Q1 2025 (1.54M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Contrib. ECIMA (€)</div>
+      <div class="kpi-value" style="color:#0284c7">1.91 M€</div>
+      <div class="kpi-delta delta-up">▲ +13.2% vs Q1 2025 (1.69M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Creació de Valor Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">669,736 €</div>
+      <div class="kpi-delta delta-neu">EBITDA ajustat ECIMA</div>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-bottom:20px">
+    <h3>ECIMA — Vendes i Resultat Mensual Q1 2026 (€)</h3>
+    <div class="chart-wrap"><canvas id="chartDequitexQ1"></canvas></div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Desembre 2025 — ECIMA SAU · Dyeing &amp; Finishing · Dequitex SL</h4>
+    <p>ECIMA resultat +59% a 1.77M€ · Dyeing -42% (costos creixents) · Balanç ECIMA molt sòlid: PN 10.55M€</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Vendes ECIMA 2025</div>
+      <div class="kpi-value" style="color:#0ea5e9">17.85 M€</div>
+      <div class="kpi-delta delta-up">▲ +7.3% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Net ECIMA</div>
+      <div class="kpi-value" style="color:#059669">1,768,511 €</div>
+      <div class="kpi-delta delta-up">▲ +59% vs 2024 (1.11M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Contribució ECIMA</div>
+      <div class="kpi-value" style="color:#0284c7">38.3%</div>
+      <div class="kpi-delta delta-up">▲ +3pp vs 2024 (36.6%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Vendes DYEING 2025</div>
+      <div class="kpi-value" style="color:#0ea5e9">5.86 M€</div>
+      <div class="kpi-delta delta-up">▲ +8.2% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Net DYEING</div>
+      <div class="kpi-value" style="color:#d97706">227,891 €</div>
+      <div class="kpi-delta delta-down">▼ -42% vs 2024 (395K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Patrimoni Net ECIMA</div>
+      <div class="kpi-value" style="color:#059669">10.55 M€</div>
+      <div class="kpi-delta delta-up">▲ +20% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Deute LP ECIMA</div>
+      <div class="kpi-value" style="color:#059669">2.25 M€</div>
+      <div class="kpi-delta delta-up">▲ Baixant fort</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Tresoreria ECIMA</div>
+      <div class="kpi-value" style="color:#0ea5e9">880,209 €</div>
+      <div class="kpi-delta delta-neu">Posició còmoda</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Vendes per Empresa — 2024 vs 2025</h3>
+      <div class="chart-wrap"><canvas id="chartDequitexVendes"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Resultat Net per Empresa — 2024 vs 2025</h3>
+      <div class="chart-wrap"><canvas id="chartDequitexResultat"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Balanç ECIMA 31-12-2025 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartEcimaBalance"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Compte de Resultats Comparatiu (€)</h3>
+    <table>
+      <thead><tr>
+        <th>Concepte</th>
+        <th style="color:#0ea5e9">ECIMA 2024</th><th style="color:#0ea5e9">ECIMA 2025</th>
+        <th style="color:#06b6d4">DYEING 2024</th><th style="color:#06b6d4">DYEING 2025</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Vendes</td><td>16,632,689</td><td class="pos">17,851,625</td><td>5,414,062</td><td class="pos">5,856,857</td></tr>
+        <tr><td>Marge Contribució</td><td>6,080,415</td><td class="pos">6,831,662</td><td>3,182,697</td><td class="pos">3,518,777</td></tr>
+        <tr><td>% Marge</td><td>36.6%</td><td class="pos">38.3%</td><td>58.8%</td><td class="pos">60.1%</td></tr>
+        <tr><td>Gastos Fijos</td><td class="neg">-4,158,029</td><td class="neg">-4,297,230</td><td class="neg">-2,828,110</td><td class="neg">-2,963,088</td></tr>
+        <tr><td>Gastos Financers</td><td class="neg">-209,762</td><td class="pos">-168,392</td><td class="neg">-17,557</td><td class="pos">-9,889</td></tr>
+        <tr><td>Amortitzacions</td><td class="neg">-348,162</td><td class="neg">-422,927</td><td class="neg">-279,782</td><td class="neg">-314,638</td></tr>
+        <tr class="tr-total"><td>RESULTAT NET</td><td class="pos">1,109,741</td><td class="pos">1,768,511</td><td class="pos">394,987</td><td class="pos">227,891</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h3>Balanç de Situació al 31-12-2025 (€)</h3>
+    <table>
+      <thead><tr><th>Partida</th><th style="color:#0ea5e9">ECIMA</th><th style="color:#06b6d4">Dyeing</th><th style="color:#7c3aed">Dequitex SL</th></tr></thead>
+      <tbody>
+        <tr><td>Actiu No Corrent</td><td>6,673,537</td><td>1,820,222</td><td>9,248,602</td></tr>
+        <tr><td>Actiu Corrent</td><td>9,097,022</td><td>517,648</td><td>316,853</td></tr>
+        <tr class="tr-total"><td>TOTAL ACTIU</td><td>15,770,559</td><td>2,337,871</td><td>9,565,455</td></tr>
+        <tr><td>Patrimoni Net</td><td class="pos">10,554,181</td><td class="pos">1,020,673</td><td class="pos">9,284,458</td></tr>
+        <tr><td>Passiu No Corrent</td><td>2,245,602</td><td>680,687</td><td>20,915</td></tr>
+        <tr><td>Passiu Corrent</td><td>2,970,776</td><td>636,511</td><td>260,082</td></tr>
+        <tr class="tr-total"><td>TOTAL PASSIU + PN</td><td>15,770,559</td><td>2,337,871</td><td>9,565,455</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VELTEX
+═══════════════════════════════════════════════════════════════════ -->
+<div id="veltex" class="section section-veltex">
+  <div class="page-header">
+    <div class="page-title">Veltex S.A. <span class="badge badge-emerald">Moquetes</span></div>
+    <div class="page-sub">Primers Resultats Q1 2026 · Informe Anual 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Primers Resultats — Gener–Març 2026</h4>
+    <p>Facturació 875K€ vs pressupost alt. 874K€ (+0.2%) · Tendència alcista: Gen 5K€ → Feb 57K€ → Mar 81K€ de resultat</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Vendes Q1 2026</div>
+      <div class="kpi-value" style="color:#10b981">875,414 €</div>
+      <div class="kpi-delta delta-neu">vs ppto. alt. 874K€ (+0.2%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">143,197 €</div>
+      <div class="kpi-delta delta-neu">97% del pressupost (147K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Recursos Generats Q1 2026</div>
+      <div class="kpi-value" style="color:#047857">159,697 €</div>
+      <div class="kpi-delta delta-neu">vs ppto. 165K€ (96.8%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Costos Totals Q1 2026</div>
+      <div class="kpi-value" style="color:#dc2626">715,717 €</div>
+      <div class="kpi-delta delta-up">▼ -14.3% vs ppto. 835K€</div>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-bottom:20px">
+    <h3>Veltex — Vendes i Resultat Mensual Q1 2026 (€)</h3>
+    <div class="chart-wrap"><canvas id="chartVeltexQ1"></canvas></div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Informe Anual 2025 — Producció, Vendes i Resultats</h4>
+    <p>Resultat +307% a 365K€ · Vendes +16% a 3.77M€ · Marge brut 49% · 2.23M m² fabricats</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Vendes Totals 2025</div>
+      <div class="kpi-value" style="color:#10b981">3,768,014 €</div>
+      <div class="kpi-delta delta-up">▲ +16.1% vs 2024 (3.25M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Net 2025</div>
+      <div class="kpi-value" style="color:#059669">365,051 €</div>
+      <div class="kpi-delta delta-up">▲ +307% vs 2024 (90K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Marge Brut 2025</div>
+      <div class="kpi-value" style="color:#047857">49%</div>
+      <div class="kpi-delta delta-up">▲ +1 pp vs 2024 (48%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Recursos Generats</div>
+      <div class="kpi-value" style="color:#059669">431,616 €</div>
+      <div class="kpi-delta delta-up">▲ +1.759% vs 2024 (23K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">M² Fabricats 2025</div>
+      <div class="kpi-value" style="color:#10b981">2,228,626</div>
+      <div class="kpi-delta delta-up">▲ +15% vs 2024 (1.94M)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">M² / Dia Promig</div>
+      <div class="kpi-value" style="color:#0d9488">10,318 m²</div>
+      <div class="kpi-delta delta-neu">Productivitat estable</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Qualitat Estàndard</div>
+      <div class="kpi-value" style="color:#059669">93.9%</div>
+      <div class="kpi-delta delta-up">2,092,210 m² estàndard</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Treballadors 2025</div>
+      <div class="kpi-value" style="color:#10b981">11</div>
+      <div class="kpi-delta delta-up">▲ +1 vs 2024 (10)</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Facturació Anual 2020–2025 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVeltexFact"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Resultat Net i Recursos Generats 2020–2025 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVeltexRec"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>M² Fabricats Anuals 2020–2025</h3>
+      <div class="chart-wrap"><canvas id="chartVeltexM2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Facturació Mensual 2025 vs 2024 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVeltexMensual"></canvas></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="table-card">
+      <h3>Compte d'Explotació (€)</h3>
+      <table>
+        <thead><tr><th>Concepte</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+        <tbody>
+          <tr><td>Vendes Nacionals</td><td>4,120,477</td><td>3,239,714</td><td>3,754,025</td></tr>
+          <tr><td>Vendes Exportació</td><td>48,030</td><td>5,445</td><td>844</td></tr>
+          <tr><td>Subvencions</td><td>0</td><td>0</td><td class="pos">13,145</td></tr>
+          <tr class="tr-total"><td>VENDES TOTALS</td><td>4,168,506</td><td>3,245,158</td><td class="pos">3,768,014</td></tr>
+          <tr><td>Cost Mercaderies</td><td class="neg">-2,230,632</td><td class="neg">-1,688,760</td><td class="neg">-1,922,151</td></tr>
+          <tr><td>% Cost s/Vendes</td><td>54%</td><td>52%</td><td class="pos">51%</td></tr>
+          <tr><td>Marge Brut</td><td>1,937,874</td><td>1,556,398</td><td class="pos">1,845,863</td></tr>
+          <tr><td>% Marge Brut</td><td>46%</td><td>48%</td><td class="pos">49%</td></tr>
+          <tr><td>Gastos Generals</td><td class="neg">-1,665,333</td><td class="neg">-1,579,626</td><td class="neg">-1,414,246</td></tr>
+          <tr><td>Rec. General</td><td>272,541</td><td class="neg">23,228</td><td class="pos">431,617</td></tr>
+          <tr><td>Amortització</td><td class="neg">-66,000</td><td class="neg">-66,000</td><td class="neg">-66,000</td></tr>
+          <tr><td>Financers</td><td class="neg">-21,455</td><td class="neg">-549</td><td class="pos">+8,460</td></tr>
+          <tr class="tr-total"><td>RESULTAT NET</td><td class="pos">185,086</td><td class="neg">89,777</td><td class="pos">365,051</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-card">
+      <h3>Top 8 Clients 2025 (€)</h3>
+      <table>
+        <thead><tr><th>Client</th><th>Zona</th><th>2025</th><th>2024</th><th>Var%</th></tr></thead>
+        <tbody>
+          <tr><td>Inst. Moq. Hnos. Roldán</td><td class="neutral">MAD</td><td>424,872</td><td>368,762</td><td class="pos">+15%</td></tr>
+          <tr><td>Moquetes en Ferias</td><td class="neutral">CAT</td><td>420,732</td><td>322,773</td><td class="pos">+30%</td></tr>
+          <tr><td>Moquetas Moexfe</td><td class="neutral">MAD</td><td>338,837</td><td>210,481</td><td class="pos">+61%</td></tr>
+          <tr><td>Servis Complet</td><td class="neutral">CAT</td><td>337,671</td><td>184,127</td><td class="pos">+83%</td></tr>
+          <tr><td>Moq. i Stands Betulo</td><td class="neutral">CAT</td><td>307,825</td><td>283,871</td><td class="pos">+8%</td></tr>
+          <tr><td>Faïnfa Valles</td><td class="neutral">CAT</td><td>255,354</td><td>335,935</td><td class="neg">-24%</td></tr>
+          <tr><td>Moq. y Text. Taboada</td><td class="neutral">VAL</td><td>216,798</td><td>135,888</td><td class="pos">+60%</td></tr>
+          <tr><td>Distands Moquetas</td><td class="neutral">CAT</td><td>191,574</td><td>267,405</td><td class="neg">-28%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     ALCAZAR
+═══════════════════════════════════════════════════════════════════ -->
+<div id="alcazar" class="section section-alcazar">
+  <div class="page-header">
+    <div class="page-title">Alcazar Cinema S.A. <span class="badge badge-amber">Cinema</span></div>
+    <div class="page-sub">Balanç de Situació i Compte de Resultats al 31/12/2025</div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Xifra de Negocis</div>
+      <div class="kpi-value" style="color:#f59e0b">1,493,813 €</div>
+      <div class="kpi-delta delta-neu">Cinema + atípics + altres</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Ingressos Cinema</div>
+      <div class="kpi-value" style="color:#d97706">1,143,090 €</div>
+      <div class="kpi-delta delta-neu">76.5% dels ingressos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Ingressos Atípics</div>
+      <div class="kpi-value" style="color:#b45309">328,058 €</div>
+      <div class="kpi-delta delta-neu">22.0% dels ingressos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Exercici</div>
+      <div class="kpi-value" style="color:#dc2626">-111,547 €</div>
+      <div class="kpi-delta delta-down">▼ Pèrdues 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Patrimoni Net</div>
+      <div class="kpi-value" style="color:#059669">3,505,066 €</div>
+      <div class="kpi-delta delta-up">Solvència patrimonial OK</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Actiu Total</div>
+      <div class="kpi-value" style="color:#f59e0b">4,187,270 €</div>
+      <div class="kpi-delta delta-neu">Balanç sòlid</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Ratio Solvència (PN/A)</div>
+      <div class="kpi-value" style="color:#059669">83.7%</div>
+      <div class="kpi-delta delta-up">Molt bo</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Pèrdues Acumulades</div>
+      <div class="kpi-value" style="color:#dc2626">-968,926 €</div>
+      <div class="kpi-delta delta-down">Resultat exercicis ant.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Compte de Resultats 2025 — Cascada</h3>
+      <div class="chart-wrap"><canvas id="chartAlcazarPL"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Balanç — Actiu i Finançament 31/12/2025</h3>
+      <div class="chart-wrap"><canvas id="chartAlcazarBalance"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Compte de Pèrdues i Guanys 2025 (€)</h3>
+    <table>
+      <thead><tr><th>Concepte</th><th>Import (€)</th><th>% s/ Ingressos</th></tr></thead>
+      <tbody>
+        <tr><td>Ingressos Cinema</td><td class="pos">1,143,090</td><td class="pos">76.5%</td></tr>
+        <tr><td>Ingressos Atípics</td><td class="pos">328,058</td><td class="pos">22.0%</td></tr>
+        <tr><td>Altres Ingressos</td><td class="pos">22,665</td><td class="pos">1.5%</td></tr>
+        <tr class="tr-total"><td>XIFRA DE NEGOCIS</td><td class="pos">1,493,813</td><td>100%</td></tr>
+        <tr><td>Aprovisionaments</td><td class="neg">-706,592</td><td class="neg">-47.3%</td></tr>
+        <tr><td>Altres Ingressos Explotació</td><td class="pos">+50,878</td><td class="pos">+3.4%</td></tr>
+        <tr><td>Gastos de Personal</td><td class="neg">-441,355</td><td class="neg">-29.5%</td></tr>
+        <tr><td>Altres Gastos Explotació</td><td class="neg">-499,034</td><td class="neg">-33.4%</td></tr>
+        <tr class="tr-total"><td>RESULTAT D'EXPLOTACIÓ</td><td class="neg">-102,799</td><td class="neg">-6.9%</td></tr>
+        <tr><td>Gastos Financers</td><td class="neg">-8,748</td><td class="neg">-0.6%</td></tr>
+        <tr class="tr-total"><td>RESULTAT EXERCICI</td><td class="neg">-111,547</td><td class="neg">-7.5%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MULTICINEMES
+═══════════════════════════════════════════════════════════════════ -->
+<div id="multicinemes" class="section section-multicinemes">
+  <div class="page-header">
+    <div class="page-title">Multicinemes Eix Macià S.A. <span class="badge badge-rose">Cinema</span></div>
+    <div class="page-sub">Balanç de Situació i Compte de Resultats al 31/12/2025 · Alerta Patrimonial</div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Ingressos Cinema (Taquilla)</div>
+      <div class="kpi-value" style="color:#ef4444">790,644 €</div>
+      <div class="kpi-delta delta-neu">71.3% dels ingressos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Ingressos Crispetes</div>
+      <div class="kpi-value" style="color:#f97316">294,392 €</div>
+      <div class="kpi-delta delta-neu">26.6% dels ingressos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Exercici</div>
+      <div class="kpi-value" style="color:#dc2626">-127,461 €</div>
+      <div class="kpi-delta delta-down">▼ Pèrdues 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">⚠ Patrimoni Net</div>
+      <div class="kpi-value" style="color:#dc2626">61,557 €</div>
+      <div class="kpi-delta delta-down">▼ Molt reduït — risc</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Deute LP</div>
+      <div class="kpi-value" style="color:#dc2626">420,987 €</div>
+      <div class="kpi-delta delta-down">6.8× el patrimoni net</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Passiu Corrent</div>
+      <div class="kpi-value" style="color:#dc2626">615,736 €</div>
+      <div class="kpi-delta delta-down">10× el patrimoni net</td></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Pèrdues Acumulades</div>
+      <div class="kpi-value" style="color:#dc2626">-2,423,985 €</div>
+      <div class="kpi-delta delta-down">Historial de pèrdues</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Crèdit Fiscal Pendent</div>
+      <div class="kpi-value" style="color:#d97706">221,106 €</div>
+      <div class="kpi-delta delta-neu">Actiu per impost diferit</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Compte de Resultats 2025 — Cascada</h3>
+      <div class="chart-wrap"><canvas id="chartMultiPL"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Balanç — Actiu i Finançament 31/12/2025</h3>
+      <div class="chart-wrap"><canvas id="chartMultiBalance"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>⚠ Alerta Situació Patrimonial (€)</h3>
+    <table>
+      <tbody>
+        <tr><td>Capital social</td><td class="pos">1,218,528</td><td class="neutral">Aportació original</td></tr>
+        <tr><td>Aportacions de socis (c/c)</td><td class="pos">1,149,191</td><td class="pos">Suport dels accionistes</td></tr>
+        <tr><td>Pèrdues acumulades d'exercicis anteriors</td><td class="neg">-2,423,985</td><td class="neg">Historial de pèrdues</td></tr>
+        <tr><td>Resultat 2025</td><td class="neg">-127,461</td><td class="neg">Pèrdues continuades</td></tr>
+        <tr class="tr-total"><td>PATRIMONI NET TOTAL</td><td class="neg">61,557</td><td class="neg">Gairebé en negatiu</td></tr>
+        <tr><td>Passiu Corrent (deutes a CP)</td><td class="neg">615,736</td><td class="neg">10× el patrimoni net</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VIA LAIETANA
+═══════════════════════════════════════════════════════════════════ -->
+<div id="vialaietana" class="section section-vialaietana">
+  <div class="page-header">
+    <div class="page-title">Grup Via Laietana <span class="badge badge-rose">Lleure / Joc</span></div>
+    <div class="page-sub">Primers Resultats Q1 2026 · Control Pressupostari 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Primers Resultats — Gener–Març 2026</h4>
+    <p>Grup: 1.43M€ resultat net (32% del ppto. anual de 4.5M€ — lleugerament per sobre del ritme) · Associades: 460K€ (+17% vs ritme ppto.)</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Grup Q1 2026</div>
+      <div class="kpi-value" style="color:#ec4899">1,425,602 €</div>
+      <div class="kpi-delta delta-up">▲ 32% del ppto. anual (en ruta)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Associades Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">459,606 €</div>
+      <div class="kpi-delta delta-up">▲ 41% del ppto. anual (superant)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">C.E.J.A. — Millor Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">570,125 €</div>
+      <div class="kpi-delta delta-up">▲ 24% del ppto. anual (2.35M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Exp. Via Laietana Q1 2026</div>
+      <div class="kpi-value" style="color:#f59e0b">469,727 €</div>
+      <div class="kpi-delta delta-up">▲ 49% del ppto. anual (inc. divid.)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Valenbin Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">174,954 €</div>
+      <div class="kpi-delta delta-up">▲ 31% del ppto. anual (558K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Cinco Quince Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">130,802 €</div>
+      <div class="kpi-delta delta-up">▲ 39% del ppto. anual (334K€)</div>
+    </div>
+  </div>
+  <div class="charts-row" style="margin-bottom:20px">
+    <div class="chart-card">
+      <h3>Resultat Net Empreses Grup — Real vs Pressupost Q1 2026 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVLQ1Grup"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Resultat Net Associades — Real vs Pressupost Q1 2026 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVLQ1Assoc"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Empreses del Grup — Resultat Net Q1 2026 vs Pressupost Anual (€)</h3>
+    <table>
+      <thead><tr><th>Empresa</th><th>Q1 Real 2026</th><th>Ppto. Anual 2026</th><th>% Assolit</th><th>Ritme vs Ppto.</th></tr></thead>
+      <tbody>
+        <tr><td>Exp. Via Laietana</td><td class="pos">469,727</td><td>952,853</td><td class="pos">49.3%</td><td><span class="pill pill-green">●&nbsp;Supera</span></td></tr>
+        <tr><td>Cinco Quince S.A.</td><td class="pos">130,802</td><td>334,198</td><td class="pos">39.1%</td><td><span class="pill pill-green">●&nbsp;Supera</span></td></tr>
+        <tr><td>C.E.J.A. S.L.</td><td class="pos">570,125</td><td>2,352,538</td><td class="neutral">24.2%</td><td><span class="pill pill-blue">●&nbsp;En ruta</span></td></tr>
+        <tr><td>Valenbin S.L.</td><td class="pos">174,954</td><td>557,795</td><td class="pos">31.4%</td><td><span class="pill pill-green">●&nbsp;Supera</span></td></tr>
+        <tr><td>Jayde S.A.</td><td class="pos">79,994</td><td>306,529</td><td class="neutral">26.1%</td><td><span class="pill pill-blue">●&nbsp;En ruta</span></td></tr>
+        <tr class="tr-total"><td>TOTAL GRUP</td><td class="pos">1,425,602</td><td>4,503,913</td><td class="pos">31.7%</td><td><span class="pill pill-green">●&nbsp;Per sobre</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Control Pressupostari 2025 — Empreses del Grup i Associades</h4>
+    <p>Resultat grup 4.45M€ (+23% vs ppto.) · C.E.J.A. destaca amb +45% · Associades +19% vs ppto.</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Facturació Consolidada</div>
+      <div class="kpi-value" style="color:#ec4899">48.95 M€</div>
+      <div class="kpi-delta delta-up">▲ +2.2% vs 2024 (47.9M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Net Grup</div>
+      <div class="kpi-value" style="color:#059669">4,450,305 €</div>
+      <div class="kpi-delta delta-up">▲ +23% vs pressupost</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Resultat Net Associades</div>
+      <div class="kpi-value" style="color:#059669">1,216,946 €</div>
+      <div class="kpi-delta delta-up">▲ +19% vs pressupost</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Cash Flow Total Grup</div>
+      <div class="kpi-value" style="color:#059669">4,979,969 €</div>
+      <div class="kpi-delta delta-up">▲ +22% vs pressupost</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">C.E.J.A. — Millor Empresa</div>
+      <div class="kpi-value" style="color:#059669">2,314,244 €</div>
+      <div class="kpi-delta delta-up">▲ +45% vs pressupost</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Via Laietana — Per sota</div>
+      <div class="kpi-value" style="color:#d97706">654,446 €</div>
+      <div class="kpi-delta delta-down">▼ -18.5% vs pressupost</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Patrimoni Net Consolidat</div>
+      <div class="kpi-value" style="color:#059669">22.10 M€</div>
+      <div class="kpi-delta delta-up">▲ +12.5% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Plantilla 2025</div>
+      <div class="kpi-value" style="color:#ec4899">186</div>
+      <div class="kpi-delta delta-up">▲ +10 vs 2024 (176)</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Resultat Net Empreses Grup — Real vs Pressupost 2025 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVLGrup"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Resultat Net Empreses Associades — Real vs Pressupost (€)</h3>
+      <div class="chart-wrap"><canvas id="chartVLAssoc"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Compte de Resultats Consolidat — 2024 vs 2025 (M€)</h3>
+      <div class="chart-wrap"><canvas id="chartVLConsolidat"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Pes de Cada Empresa al Resultat del Grup</h3>
+      <div class="chart-wrap"><canvas id="chartVLPie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="table-card">
+      <h3>Empreses del Grup — Resultat Net 2025 (€)</h3>
+      <table>
+        <thead><tr><th>Empresa</th><th>Real 2025</th><th>Pressupost</th><th>Desviació</th></tr></thead>
+        <tbody>
+          <tr><td>Exp. Via Laietana</td><td class="pos">654,446</td><td>802,806</td><td class="neg">-18.5%</td></tr>
+          <tr><td>Cinco Quince S.A.</td><td class="pos">431,641</td><td>344,972</td><td class="pos">+25.1%</td></tr>
+          <tr><td>C.E.J.A. S.L.</td><td class="pos">2,314,244</td><td>1,594,408</td><td class="pos">+45.1%</td></tr>
+          <tr><td>Valenbin S.L.</td><td class="pos">706,690</td><td>543,083</td><td class="pos">+30.1%</td></tr>
+          <tr><td>Jayde S.A.</td><td class="pos">343,284</td><td>333,248</td><td class="pos">+3.0%</td></tr>
+          <tr class="tr-total"><td>TOTAL GRUP</td><td class="pos">4,450,305</td><td>3,618,517</td><td class="pos">+23.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-card">
+      <h3>Empreses Associades — Resultat Net 2025 (€)</h3>
+      <table>
+        <thead><tr><th>Empresa</th><th>Real 2025</th><th>Pressupost</th><th>Desviació</th></tr></thead>
+        <tbody>
+          <tr><td>Sorca</td><td class="pos">31,661</td><td>49,084</td><td class="neg">-35.5%</td></tr>
+          <tr><td>Servimar Pineda</td><td class="pos">294,621</td><td>214,227</td><td class="pos">+37.5%</td></tr>
+          <tr><td>Servimar Badalona</td><td class="pos">68,730</td><td>40,647</td><td class="pos">+69.1%</td></tr>
+          <tr><td>Servimar Borrell</td><td class="pos">78,778</td><td class="neg">-23,246</td><td class="pos">+439%</td></tr>
+          <tr><td>Imperial Bingos</td><td class="pos">772,577</td><td>797,392</td><td class="neg">-3.1%</td></tr>
+          <tr><td>New Parc Castellón</td><td class="neg">-29,420</td><td class="neg">-55,846</td><td class="pos">Millora</td></tr>
+          <tr class="tr-total"><td>TOTAL ASSOCIADES</td><td class="pos">1,216,946</td><td>1,022,257</td><td class="pos">+19.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     HOLDING & IMMOBILIARI — VISIÓ SECTORIAL
+═══════════════════════════════════════════════════════════════════ -->
+<div id="holding" class="section section-holding">
+  <div class="page-header">
+    <div class="page-title">Holding &amp; Immobiliari <span class="badge badge-violet">Visió Sectorial</span></div>
+    <div class="page-sub">Neil S.L. · Laimpa S.L. · Esp. Egara S.A. — Q1 2026 + Anual 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Resultats Agregats del Sector — Gener–Març 2026</h4>
+    <p>Total sector: 1.03M€ de resultat (+134% vs Q1 2025) · Neil i Laimpa impulsats per dividends extraordinaris</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Neil — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#8b5cf6">522,272 €</div>
+      <div class="kpi-delta delta-up">▲ +164% vs Q1 2025 (198K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Laimpa — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#6366f1">406,167 €</div>
+      <div class="kpi-delta delta-up">▲ +172% vs Q1 2025 (149K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Egara — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#06b6d4">101,190 €</div>
+      <div class="kpi-delta delta-up">▲ +9% vs Q1 2025 (93K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Sector Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">1,029,629 €</div>
+      <div class="kpi-delta delta-up">▲ +134% vs Q1 2025 (440K€)</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Q1 2025 vs Q1 2026 — Resultat per Empresa (€)</h3>
+      <div class="chart-wrap"><canvas id="chartHoldingQ1"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Resultat Anual 2024 vs 2025 — Per Empresa (€)</h3>
+      <div class="chart-wrap"><canvas id="chartHoldingAnual"></canvas></div>
+    </div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Resum Sector — Exercici 2025</h4>
+    <p>Total sector 2025: 2.05M€ (+4% vs 2024) · Laimpa destaca amb +38% · Neil i Egara a la baixa per costos puntuals</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Neil — Resultat 2025</div>
+      <div class="kpi-value" style="color:#8b5cf6">756,173 €</div>
+      <div class="kpi-delta delta-down">▼ -13% vs 2024 (872K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Laimpa — Resultat 2025</div>
+      <div class="kpi-value" style="color:#6366f1">939,028 €</div>
+      <div class="kpi-delta delta-up">▲ +38% vs 2024 (679K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Egara — Resultat 2025</div>
+      <div class="kpi-value" style="color:#06b6d4">354,034 €</div>
+      <div class="kpi-delta delta-down">▼ -14% vs 2024 (412K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Sector 2025</div>
+      <div class="kpi-value" style="color:#059669">2,049,235 €</div>
+      <div class="kpi-delta delta-up">▲ +4% vs 2024 (1.96M€)</div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Resum Comparatiu del Sector (€)</h3>
+    <table>
+      <thead><tr><th>Empresa</th><th>Resultat 2024</th><th>Resultat 2025</th><th>Var. 2024→25</th><th>Q1 2025</th><th>Q1 2026</th><th>Var. Q1</th></tr></thead>
+      <tbody>
+        <tr><td>Neil S.L.</td><td>872,483</td><td class="neg">756,173</td><td class="neg">-13.3%</td><td>197,513</td><td class="pos">522,272</td><td class="pos">+164%</td></tr>
+        <tr><td>Laimpa S.L.</td><td>678,682</td><td class="pos">939,028</td><td class="pos">+38.4%</td><td>149,361</td><td class="pos">406,167</td><td class="pos">+172%</td></tr>
+        <tr><td>Esp. Egara S.A.</td><td>412,325</td><td class="neg">354,034</td><td class="neg">-14.2%</td><td>92,831</td><td class="pos">101,190</td><td class="pos">+9%</td></tr>
+        <tr class="tr-total"><td>TOTAL SECTOR</td><td>1,963,490</td><td class="pos">2,049,235</td><td class="pos">+4.4%</td><td>439,705</td><td class="pos">1,029,629</td><td class="pos">+134%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TÈXTIL — VISIÓ SECTORIAL
+═══════════════════════════════════════════════════════════════════ -->
+<div id="textil" class="section section-textil">
+  <div class="page-header">
+    <div class="page-title">Sector Tèxtil <span class="badge badge-sky">Visió Sectorial</span></div>
+    <div class="page-sub">Grup Dequitex (ECIMA · Dyeing) · Veltex S.A. — Q1 2026 + Anual 2025</div>
+  </div>
+
+  <div class="q1-banner">
+    <h4><span class="q1-badge">Q1 2026</span>Resultats Tèxtil — Gener–Març 2026</h4>
+    <p>ECIMA resultat +6.4% malgrat vendes -4% · Veltex al 97% del pressupost amb tendència alcista mes a mes</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">ECIMA — Vendes Q1 2026</div>
+      <div class="kpi-value" style="color:#0ea5e9">4.44 M€</div>
+      <div class="kpi-delta delta-down">▼ -4% vs Q1 2025 (4.62M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ECIMA — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">438,646 €</div>
+      <div class="kpi-delta delta-up">▲ +6.4% vs Q1 2025 (412K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ECIMA — Marge Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">43.1%</div>
+      <div class="kpi-delta delta-up">▲ +6.6 pp vs Q1 2025 (36.5%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Veltex — Vendes Q1 2026</div>
+      <div class="kpi-value" style="color:#10b981">875,414 €</div>
+      <div class="kpi-delta delta-neu">≈ ppto. alt. 874K€ (+0.2%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Veltex — Resultat Q1 2026</div>
+      <div class="kpi-value" style="color:#059669">143,197 €</div>
+      <div class="kpi-delta delta-neu">97% del pressupost (147K€)</div>
+    </div>
+  </div>
+
+  <div class="annual-banner">
+    <h4><span class="annual-badge">Anual 2025</span>Resum Sector Tèxtil — Exercici 2025</h4>
+    <p>ECIMA excel·lent: +59% resultat · Dyeing a la baixa -42% · Veltex recuperació espectacular +307%</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">ECIMA — Vendes 2025</div>
+      <div class="kpi-value" style="color:#0ea5e9">17.85 M€</div>
+      <div class="kpi-delta delta-up">▲ +7.3% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ECIMA — Resultat 2025</div>
+      <div class="kpi-value" style="color:#059669">1,768,511 €</div>
+      <div class="kpi-delta delta-up">▲ +59% vs 2024 (1.11M€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dyeing — Vendes 2025</div>
+      <div class="kpi-value" style="color:#06b6d4">5.86 M€</div>
+      <div class="kpi-delta delta-up">▲ +8.2% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Dyeing — Resultat 2025</div>
+      <div class="kpi-value" style="color:#d97706">227,891 €</div>
+      <div class="kpi-delta delta-down">▼ -42% vs 2024 (395K€)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Veltex — Vendes 2025</div>
+      <div class="kpi-value" style="color:#10b981">3.77 M€</div>
+      <div class="kpi-delta delta-up">▲ +16.1% vs 2024</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Veltex — Resultat 2025</div>
+      <div class="kpi-value" style="color:#059669">365,051 €</div>
+      <div class="kpi-delta delta-up">▲ +307% vs 2024 (90K€)</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Vendes per Empresa — 2024 vs 2025 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartTextilVendes"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Resultat Net per Empresa — 2024 vs 2025 (€)</h3>
+      <div class="chart-wrap"><canvas id="chartTextilResultat"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Resum Comparatiu Sector Tèxtil (€)</h3>
+    <table>
+      <thead><tr><th>Empresa</th><th>Vendes 2024</th><th>Vendes 2025</th><th>Resultat 2024</th><th>Resultat 2025</th><th>Resultat Q1 2026</th></tr></thead>
+      <tbody>
+        <tr><td>ECIMA (Dequitex)</td><td>16,632,689</td><td class="pos">17,851,625</td><td>1,109,741</td><td class="pos">1,768,511</td><td class="pos">438,646</td></tr>
+        <tr><td>Dyeing (Dequitex)</td><td>5,414,062</td><td class="pos">5,856,857</td><td>394,987</td><td class="neg">227,891</td><td class="neutral">—</td></tr>
+        <tr><td>Veltex S.A.</td><td>3,245,158</td><td class="pos">3,768,014</td><td>89,777</td><td class="pos">365,051</td><td class="pos">143,197</td></tr>
+        <tr class="tr-total"><td>TOTAL SECTOR</td><td>25,291,909</td><td class="pos">27,476,496</td><td>1,594,505</td><td class="pos">2,361,453</td><td class="pos">581,843</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     CINEMES — VISIÓ SECTORIAL
+═══════════════════════════════════════════════════════════════════ -->
+<div id="cinemes" class="section section-cinemes">
+  <div class="page-header">
+    <div class="page-title">Sector Cinemes <span class="badge badge-amber">Visió Sectorial</span></div>
+    <div class="page-sub">Alcazar Cinema S.A. · Multicinemes Eix Macià S.A. — Tancament 31/12/2025</div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Alcazar — Ingressos 2025</div>
+      <div class="kpi-value" style="color:#f59e0b">1,493,813 €</div>
+      <div class="kpi-delta delta-neu">Cinema + atípics + altres</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Alcazar — Resultat 2025</div>
+      <div class="kpi-value" style="color:#dc2626">-111,547 €</div>
+      <div class="kpi-delta delta-down">▼ Pèrdues 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Alcazar — Patrimoni Net</div>
+      <div class="kpi-value" style="color:#059669">3,505,066 €</div>
+      <div class="kpi-delta delta-up">Solvència patrimonial OK (83.7%)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Eix Macià — Ingressos 2025</div>
+      <div class="kpi-value" style="color:#ef4444">1,109,328 €</div>
+      <div class="kpi-delta delta-neu">Taquilla + crispetes</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Eix Macià — Resultat 2025</div>
+      <div class="kpi-value" style="color:#dc2626">-127,461 €</div>
+      <div class="kpi-delta delta-down">▼ Pèrdues 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">⚠ Eix Macià — Patrimoni Net</div>
+      <div class="kpi-value" style="color:#dc2626">61,557 €</div>
+      <div class="kpi-delta delta-down">▼ Molt reduït — risc patrimonial</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="chart-card">
+      <h3>Resultats Comparats 2025 — Alcazar vs Eix Macià (€)</h3>
+      <div class="chart-wrap"><canvas id="chartCinesResultat"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Patrimoni Net 2025 — Comparació (€)</h3>
+      <div class="chart-wrap"><canvas id="chartCinesBalance"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <h3>Compte de Resultats Comparatiu 2025 (€)</h3>
+    <table>
+      <thead><tr><th>Concepte</th><th style="color:#f59e0b">Alcazar Cinema</th><th style="color:#ef4444">Eix Macià</th></tr></thead>
+      <tbody>
+        <tr><td>Ingressos cinema</td><td class="pos">1,143,090</td><td class="pos">790,644</td></tr>
+        <tr><td>Altres ingressos</td><td class="pos">350,723</td><td class="pos">318,684</td></tr>
+        <tr class="tr-total"><td>TOTAL INGRESSOS</td><td class="pos">1,493,813</td><td class="pos">1,109,328</td></tr>
+        <tr><td>Aprovisionaments</td><td class="neg">-706,592</td><td class="neg">-526,616</td></tr>
+        <tr><td>Gastos de personal</td><td class="neg">-441,355</td><td class="neg">-347,631</td></tr>
+        <tr><td>Altres gastos explotació</td><td class="neg">-499,034</td><td class="neg">-348,827</td></tr>
+        <tr><td>Gastos financers</td><td class="neg">-8,748</td><td class="neg">-14,586</td></tr>
+        <tr class="tr-total"><td>RESULTAT EXERCICI</td><td class="neg">-111,547</td><td class="neg">-127,461</td></tr>
+        <tr><td>Patrimoni Net</td><td class="pos">3,505,066</td><td class="neg">61,557</td></tr>
+        <tr><td>Solvència (PN / Actiu)</td><td class="pos">83.7%</td><td class="neg">5.7%</td></tr>
+        <tr><td>Pèrdues acumulades</td><td class="neg">-968,926</td><td class="neg">-2,423,985</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ─── Chart defaults ──────────────────────────────────────────────────────────
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#64748b';
+
+const gridColor = 'rgba(0,0,0,0.06)';
+const scaleOpts = {
+  x: { grid: { color: gridColor }, ticks: { color: '#64748b', font: { size: 11 } } },
+  y: { grid: { color: gridColor }, ticks: { color: '#64748b', font: { size: 11 } } }
+};
+const baseOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: '#475569', font: { size: 11 }, boxWidth: 12, padding: 12 } },
+    tooltip: { backgroundColor: '#1e293b', titleColor: '#f8fafc', bodyColor: '#cbd5e1', padding: 10, cornerRadius: 8 }
+  }
+};
+const withScales = { ...baseOpts, scales: scaleOpts };
+const noScales = { ...baseOpts };
+
+const PAL = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#f97316','#14b8a6'];
+const PAL_A = PAL.map(c => c + 'cc');
+
+function fmtK(v) { return v === 0 ? '0' : Math.abs(v) >= 1e6 ? (v/1e6).toFixed(1)+'M' : (v/1000).toFixed(0)+'K'; }
+
+// ─── OVERVIEW ────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartOverviewBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Via Laietana','ECIMA','Veltex','Laimpa','Neil','Egara','Dyeing','Alcazar','Eix Macià'],
+    datasets: [{
+      label: 'Resultat Net 2025 (€)',
+      data: [4450305, 1768511, 365051, 939028, 756173, 354034, 227891, -111547, -127461],
+      backgroundColor: ['#ec4899cc','#0ea5e9cc','#10b981cc','#6366f1cc','#8b5cf6cc','#06b6d4cc','#38bdf8cc','#f59e0bcc','#ef4444cc'],
+      borderColor:     ['#ec4899','#0ea5e9','#10b981','#6366f1','#8b5cf6','#06b6d4','#38bdf8','#f59e0b','#ef4444'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartOverviewPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Via Laietana (49M€)','ECIMA (17.9M€)','Dyeing (5.9M€)','Veltex (3.8M€)','Alcazar (1.5M€)','Eix Macià (1.1M€)','Laimpa (1.1M€)','Neil (0.9M€)','Egara (0.6M€)'],
+    datasets: [{
+      data: [48951, 17852, 5857, 3768, 1494, 1109, 1098, 943, 627],
+      backgroundColor: ['#ec4899dd','#0ea5e9dd','#06b6d4dd','#10b981dd','#f59e0bdd','#ef4444dd','#6366f1dd','#8b5cf6dd','#14b8a6dd'],
+      borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+    }]
+  },
+  options: { ...noScales, cutout: '55%',
+    plugins: { ...noScales.plugins, legend: { position: 'right', labels: { color: '#475569', font: { size: 10 }, boxWidth: 10, padding: 6 } } } }
+});
+
+// ─── NEIL ────────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartNeilBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Arrendaments','Serveis','Financers','Divid. DESA','Divid. VL'],
+    datasets: [
+      { label: '2024', data: [167926,55757,33530,90557,694163], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [146273,37504,12882,90568,656109], backgroundColor: '#8b5cf6cc', borderColor: '#8b5cf6', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartNeilPie'), {
+  type: 'pie',
+  data: {
+    labels: ['Dividends (79.2%)','Arrendaments (15.5%)','Serveis (4.0%)','Financers (1.4%)'],
+    datasets: [{ data: [746676,146273,37504,12882],
+      backgroundColor: ['#8b5cf6dd','#a78bfadd','#c4b5fddd','#ddd6fecc'],
+      borderWidth: 2, borderColor: '#fff', hoverOffset: 5 }]
+  },
+  options: { ...noScales }
+});
+
+// ─── LAIMPA ──────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartLaimpaBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Arrendaments','Serveis','Financers','Divid. DESA','Divid. Deq.','Divid. Egara','Ben. Val.'],
+    datasets: [
+      { label: '2024', data: [126127,16779,203138,90718,120000,184698,50077], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [123454,147550,118256,90728,460000,34755,123048], backgroundColor: '#6366f1cc', borderColor: '#6366f1', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartLaimpaPie'), {
+  type: 'pie',
+  data: {
+    labels: ['Dividends (64.5%)','Serveis+Retrib (13.4%)','Financers (10.8%)','Arrendaments (11.2%)'],
+    datasets: [{ data: [708531,147550,118256,123454],
+      backgroundColor: ['#6366f1dd','#818cf8dd','#a5b4fcdd','#c7d2fecc'],
+      borderWidth: 2, borderColor: '#fff', hoverOffset: 5 }]
+  },
+  options: { ...noScales }
+});
+
+// ─── EGARA ───────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartEgaraBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Total Ingressos','G. Personal','G. Explotació','Resultat'],
+    datasets: [
+      { label: '2024', data: [613900,-122966,-78609,412325], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [626990,-229265,-43691,354034], backgroundColor: '#06b6d4cc', borderColor: '#06b6d4', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartEgaraBridge'), {
+  type: 'bar',
+  data: {
+    labels: ['Resultat 2024','+ Ingressos','− Retrib. Admin.','− G. Personal','+ Reducció Altres','Resultat 2025'],
+    datasets: [{
+      label: 'Impacte (€)',
+      data: [412325, 13090, -90000, -11425, 34944, 354034],
+      backgroundColor: ['#10b981cc','#10b981cc','#ef4444cc','#ef4444cc','#10b981cc','#06b6d4cc'],
+      borderColor:     ['#10b981','#10b981','#ef4444','#ef4444','#10b981','#06b6d4'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+// ─── DEQUITEX ────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartDequitexVendes'), {
+  type: 'bar',
+  data: {
+    labels: ['ECIMA','DYEING','DEQUITEX SL'],
+    datasets: [
+      { label: '2024', data: [16632689,5414062,806988], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [17851625,5856857,553152], backgroundColor: '#0ea5e9cc', borderColor: '#0ea5e9', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } } } }
+});
+new Chart(document.getElementById('chartDequitexResultat'), {
+  type: 'bar',
+  data: {
+    labels: ['ECIMA','DYEING','DEQUITEX SL'],
+    datasets: [
+      { label: '2024', data: [1109741,394987,5101200], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [1768511,227891,1108931], backgroundColor: ['#10b981cc','#f59e0bcc','#06b6d4cc'], borderColor: ['#10b981','#f59e0b','#06b6d4'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(2)+'M' } } } }
+});
+new Chart(document.getElementById('chartEcimaBalance'), {
+  type: 'bar',
+  data: {
+    labels: ['Actiu NC','Actiu C','Patrimoni Net','Passiu NC','Passiu C'],
+    datasets: [{
+      label: 'ECIMA 2025 (€)',
+      data: [6673537,9097022,10554181,2245602,2970776],
+      backgroundColor: ['#0ea5e9cc','#38bdf8cc','#10b981cc','#f59e0bcc','#fb923ccc'],
+      borderColor:     ['#0ea5e9','#38bdf8','#10b981','#f59e0b','#fb923c'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } } } }
+});
+
+// ─── VELTEX ──────────────────────────────────────────────────────────────────
+const vYears = ['2020','2021','2022','2023','2024','2025'];
+new Chart(document.getElementById('chartVeltexFact'), {
+  type: 'line',
+  data: {
+    labels: vYears,
+    datasets: [{
+      label: 'Facturació (€)',
+      data: [1536080,2444320,3885458,4168506,3245158,3768014],
+      borderColor: '#10b981', backgroundColor: '#10b98120', fill: true, tension: .4,
+      pointRadius: 5, pointBackgroundColor: '#10b981', pointBorderColor: '#fff', pointBorderWidth: 2
+    }]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } } } }
+});
+new Chart(document.getElementById('chartVeltexRec'), {
+  type: 'bar',
+  data: {
+    labels: vYears,
+    datasets: [
+      { label: 'Resultat Net', data: [185086,null,null,185086,89777,365051], backgroundColor: '#10b981cc', borderColor: '#10b981', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Rec. Generats', data: [514361,462994,226863,272540,23228,431616], backgroundColor: '#34d399cc', borderColor: '#34d399', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartVeltexM2'), {
+  type: 'bar',
+  data: {
+    labels: vYears,
+    datasets: [{
+      label: 'M² Fabricats',
+      data: [1192376,1652726,2546596,2414594,1936252,2228626],
+      backgroundColor: '#f59e0bcc', borderColor: '#f59e0b', borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } } } }
+});
+const mesos = ['Gen','Feb','Mar','Abr','Mai','Jun','Jul','Ago','Set','Oct','Nov','Des'];
+new Chart(document.getElementById('chartVeltexMensual'), {
+  type: 'bar',
+  data: {
+    labels: mesos,
+    datasets: [
+      { label: '2024', data: [288217,235319,89324,199100,377434,232565,206354,101318,393906,544631,336832,240158], backgroundColor: '#94a3b844', borderColor: '#94a3b8', borderWidth: 1, borderRadius: 3 },
+      { label: '2025', data: [269802,250033,371459,279404,419219,330987,171016,79989,447585,607802,299213,241505], backgroundColor: '#10b981cc', borderColor: '#10b981', borderWidth: 1.5, borderRadius: 3 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+// ─── ALCAZAR ─────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartAlcazarPL'), {
+  type: 'bar',
+  data: {
+    labels: ['Ingressos','Aprovision.','G. Personal','G. Explotació','Resultat'],
+    datasets: [{
+      data: [1493813,-706592,-441355,-499034,-111547],
+      backgroundColor: ['#10b981cc','#ef4444cc','#ef4444cc','#ef4444cc','#dc2626cc'],
+      borderColor:     ['#10b981','#ef4444','#ef4444','#ef4444','#dc2626'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartAlcazarBalance'), {
+  type: 'bar',
+  data: {
+    labels: ['Actiu NC','Actiu C','Patrimoni Net','Passiu NC','Passiu C'],
+    datasets: [{
+      label: '€',
+      data: [3305780,881490,3505066,272930,409274],
+      backgroundColor: ['#0ea5e9cc','#38bdf8cc','#10b981cc','#f59e0bcc','#fb923ccc'],
+      borderColor:     ['#0ea5e9','#38bdf8','#10b981','#f59e0b','#fb923c'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(2)+'M' } } } }
+});
+
+// ─── MULTICINEMES ────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartMultiPL'), {
+  type: 'bar',
+  data: {
+    labels: ['Ingressos','Aprovision.','G. Personal','G. Explotació','G. Financers','Resultat'],
+    datasets: [{
+      data: [1109328,-526616,-347631,-348827,-14586,-127461],
+      backgroundColor: ['#10b981cc','#ef4444cc','#ef4444cc','#ef4444cc','#ef4444cc','#dc2626cc'],
+      borderColor:     ['#10b981','#ef4444','#ef4444','#ef4444','#ef4444','#dc2626'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartMultiBalance'), {
+  type: 'bar',
+  data: {
+    labels: ['Actiu NC','Actiu C','Patrimoni Net','Passiu NC','Passiu C'],
+    datasets: [{
+      label: '€',
+      data: [854046,244234,61557,420987,615736],
+      backgroundColor: ['#0ea5e9cc','#38bdf8cc','#ef4444cc','#f59e0bcc','#fb923ccc'],
+      borderColor:     ['#0ea5e9','#38bdf8','#ef4444','#f59e0b','#fb923c'],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins, legend: { display: false } },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+// ─── VIA LAIETANA ────────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartVLGrup'), {
+  type: 'bar',
+  data: {
+    labels: ['Via Laietana','Cinco Quince','C.E.J.A.','Valenbin','Jayde'],
+    datasets: [
+      { label: 'Pressupost', data: [802806,344972,1594408,543083,333248], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Real 2025', data: [654446,431641,2314244,706690,343284],
+        backgroundColor: ['#f59e0bcc','#10b981cc','#10b981cc','#10b981cc','#10b981cc'],
+        borderColor: ['#f59e0b','#10b981','#10b981','#10b981','#10b981'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(2)+'M' } } } }
+});
+new Chart(document.getElementById('chartVLAssoc'), {
+  type: 'bar',
+  data: {
+    labels: ['Sorca','Pineda','Badalona','Borrell','Imp. Bingos','New Parc'],
+    datasets: [
+      { label: 'Pressupost', data: [49084,214227,40647,-23246,797392,-55846], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Real 2025', data: [31661,294621,68730,78778,772577,-29420],
+        backgroundColor: ['#f59e0bcc','#10b981cc','#10b981cc','#10b981cc','#10b981cc','#ef4444cc'],
+        borderColor: ['#f59e0b','#10b981','#10b981','#10b981','#10b981','#ef4444'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+new Chart(document.getElementById('chartVLConsolidat'), {
+  type: 'bar',
+  data: {
+    labels: ['Xifra Negocis','Aprovision.','G. Personal','G. Explotació','Res. Explot.','Res. Net'],
+    datasets: [
+      { label: '2024', data: [47891594,-27343241,-8520429,-6981954,3732263,2428542], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [48951259,-28219291,-8645696,-7448523,4945407,3562246], backgroundColor: '#ec4899cc', borderColor: '#ec4899', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } } } }
+});
+new Chart(document.getElementById('chartVLPie'), {
+  type: 'pie',
+  data: {
+    labels: ['C.E.J.A. (52%)','Valenbin (16%)','Via Laietana (15%)','Cinco Quince (10%)','Jayde (8%)'],
+    datasets: [{
+      data: [2314244,706690,654446,431641,343284],
+      backgroundColor: ['#10b981dd','#06b6d4dd','#f59e0bdd','#6366f1dd','#ec4899dd'],
+      borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+    }]
+  },
+  options: { ...noScales }
+});
+
+// ─── Q1 2026 CHARTS ──────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartQ1Compare'), {
+  type: 'bar',
+  data: {
+    labels: ['Neil','Laimpa','Egara','ECIMA'],
+    datasets: [
+      { label: 'Q1 2025', data: [197513,149361,92831,412311], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Q1 2026', data: [522272,406167,101190,438646],
+        backgroundColor: ['#8b5cf6cc','#6366f1cc','#06b6d4cc','#0ea5e9cc'],
+        borderColor: ['#8b5cf6','#6366f1','#06b6d4','#0ea5e9'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartNeilQ1'), {
+  type: 'bar',
+  data: {
+    labels: ['Arrendaments','Serveis Deq.','Financers','Divid. DESA','Divid. Via Laietana'],
+    datasets: [
+      { label: 'Q1 2025', data: [36928,9376,5157,22641,164027], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Q1 2026', data: [37437,9648,2226,22642,483421], backgroundColor: '#8b5cf6cc', borderColor: '#8b5cf6', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartLaimpaQ1'), {
+  type: 'bar',
+  data: {
+    labels: ['Arrendaments','Serveis+Retrib','Financers','Divid. DESA','Divid. Dequitex','Divid. Egara'],
+    datasets: [
+      { label: 'Q1 2025', data: [36913,14056,41000,22681,30000,19860], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Q1 2026', data: [23787,11866,31180,22682,360000,0], backgroundColor: '#6366f1cc', borderColor: '#6366f1', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartEgaraQ1'), {
+  type: 'bar',
+  data: {
+    labels: ['Total Ingressos','Costos Totals','Resultat'],
+    datasets: [
+      { label: 'Q1 2025', data: [156618,-63787,92831], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Q1 2026', data: [160938,-59748,101190], backgroundColor: '#06b6d4cc', borderColor: '#06b6d4', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartDequitexQ1'), {
+  type: 'bar',
+  data: {
+    labels: ['Gener','Febrer','Març'],
+    datasets: [
+      { label: 'Vendes ECIMA (€)', data: [1454419,1372361,1610201], backgroundColor: '#0ea5e9cc', borderColor: '#0ea5e9', borderWidth: 1.5, borderRadius: 4, yAxisID: 'y' },
+      { label: 'Resultat abans amort. (€)', data: [242350,195795,181497], backgroundColor: '#10b981cc', borderColor: '#10b981', borderWidth: 1.5, borderRadius: 4, yAxisID: 'y2' }
+    ]
+  },
+  options: { ...baseOpts, scales: {
+    x: scaleOpts.x,
+    y: { ...scaleOpts.y, position: 'left', ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } },
+    y2: { ...scaleOpts.y, position: 'right', grid: { drawOnChartArea: false }, ticks: { ...scaleOpts.y.ticks, callback: fmtK } }
+  }}
+});
+
+new Chart(document.getElementById('chartVeltexQ1'), {
+  type: 'bar',
+  data: {
+    labels: ['Gener','Febrer','Març'],
+    datasets: [
+      { label: 'Vendes (€)', data: [221965,292744,360705], backgroundColor: '#10b981cc', borderColor: '#10b981', borderWidth: 1.5, borderRadius: 4, yAxisID: 'y' },
+      { label: 'Resultat (€)', data: [5428,56871,80898], backgroundColor: '#34d399cc', borderColor: '#34d399', borderWidth: 1.5, borderRadius: 4, yAxisID: 'y2' }
+    ]
+  },
+  options: { ...baseOpts, scales: {
+    x: scaleOpts.x,
+    y: { ...scaleOpts.y, position: 'left', ticks: { ...scaleOpts.y.ticks, callback: fmtK } },
+    y2: { ...scaleOpts.y, position: 'right', grid: { drawOnChartArea: false }, ticks: { ...scaleOpts.y.ticks, callback: fmtK } }
+  }}
+});
+
+new Chart(document.getElementById('chartVLQ1Grup'), {
+  type: 'bar',
+  data: {
+    labels: ['Via Laietana','Cinco Quince','C.E.J.A.','Valenbin','Jayde'],
+    datasets: [
+      { label: 'Ritme esperat Q1 (ppto./4)', data: [238213,83550,588135,139449,76632], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Real Q1 2026', data: [469727,130802,570125,174954,79994],
+        backgroundColor: ['#f59e0bcc','#10b981cc','#10b981cc','#10b981cc','#10b981cc'],
+        borderColor: ['#f59e0b','#10b981','#10b981','#10b981','#10b981'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+// ─── HOLDING SECTORIAL ───────────────────────────────────────────────────────
+new Chart(document.getElementById('chartHoldingQ1'), {
+  type: 'bar',
+  data: {
+    labels: ['Neil S.L.','Laimpa S.L.','Egara S.A.'],
+    datasets: [
+      { label: 'Q1 2025', data: [197513,149361,92831], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Q1 2026', data: [522272,406167,101190],
+        backgroundColor: ['#8b5cf6cc','#6366f1cc','#06b6d4cc'],
+        borderColor: ['#8b5cf6','#6366f1','#06b6d4'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartHoldingAnual'), {
+  type: 'bar',
+  data: {
+    labels: ['Neil S.L.','Laimpa S.L.','Egara S.A.'],
+    datasets: [
+      { label: '2024', data: [872483,678682,412325], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [756173,939028,354034],
+        backgroundColor: ['#8b5cf6cc','#6366f1cc','#06b6d4cc'],
+        borderColor: ['#8b5cf6','#6366f1','#06b6d4'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+// ─── TÈXTIL SECTORIAL ────────────────────────────────────────────────────────
+new Chart(document.getElementById('chartTextilVendes'), {
+  type: 'bar',
+  data: {
+    labels: ['ECIMA','Dyeing','Veltex'],
+    datasets: [
+      { label: '2024', data: [16632689,5414062,3245158], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [17851625,5856857,3768014],
+        backgroundColor: ['#0ea5e9cc','#06b6d4cc','#10b981cc'],
+        borderColor: ['#0ea5e9','#06b6d4','#10b981'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(1)+'M' } } } }
+});
+
+new Chart(document.getElementById('chartTextilResultat'), {
+  type: 'bar',
+  data: {
+    labels: ['ECIMA','Dyeing','Veltex'],
+    datasets: [
+      { label: '2024', data: [1109741,394987,89777], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: '2025', data: [1768511,227891,365051],
+        backgroundColor: ['#0ea5e9cc','#f59e0bcc','#10b981cc'],
+        borderColor: ['#0ea5e9','#f59e0b','#10b981'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+// ─── CINEMES SECTORIAL ───────────────────────────────────────────────────────
+new Chart(document.getElementById('chartCinesResultat'), {
+  type: 'bar',
+  data: {
+    labels: ['Ingressos','G. Personal','G. Explotació','Resultat'],
+    datasets: [
+      { label: 'Alcazar Cinema', data: [1493813,-441355,-499034,-111547], backgroundColor: '#f59e0bcc', borderColor: '#f59e0b', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Eix Macià', data: [1109328,-347631,-348827,-127461], backgroundColor: '#ef4444cc', borderColor: '#ef4444', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+
+new Chart(document.getElementById('chartCinesBalance'), {
+  type: 'bar',
+  data: {
+    labels: ['Alcazar Cinema','Eix Macià'],
+    datasets: [
+      { label: 'Patrimoni Net (€)', data: [3505066,61557],
+        backgroundColor: ['#10b981cc','#ef4444cc'],
+        borderColor: ['#10b981','#ef4444'], borderWidth: 1.5, borderRadius: 6 },
+      { label: 'Pèrdues Acumulades (€)', data: [-968926,-2423985],
+        backgroundColor: ['#f59e0b88','#ef444488'],
+        borderColor: ['#f59e0b','#ef4444'], borderWidth: 1.5, borderRadius: 6 }
+    ]
+  },
+  options: { ...withScales, plugins: { ...withScales.plugins },
+    scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: v => (v/1e6).toFixed(2)+'M' } } } }
+});
+
+new Chart(document.getElementById('chartVLQ1Assoc'), {
+  type: 'bar',
+  data: {
+    labels: ['Sorca','S.Pineda','S.Badalona','S.Borrell','Imp.Bingos','New Parc'],
+    datasets: [
+      { label: 'Ritme esperat Q1 (ppto./4)', data: [13497,71808,7350,8644,169071,9019], backgroundColor: '#94a3b855', borderColor: '#94a3b8', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Real Q1 2026', data: [45548,50248,69130,84392,212219,-1931],
+        backgroundColor: ['#10b981cc','#f59e0bcc','#10b981cc','#10b981cc','#10b981cc','#ef4444cc'],
+        borderColor: ['#10b981','#f59e0b','#10b981','#10b981','#10b981','#ef4444'], borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: { ...withScales, scales: { ...scaleOpts, y: { ...scaleOpts.y, ticks: { ...scaleOpts.y.ticks, callback: fmtK } } } }
+});
+</script>
+</body>
+</html>
